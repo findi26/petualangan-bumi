@@ -104,7 +104,7 @@
 
   .poster-frame{width:100%;display:flex;justify-content:center;padding:4px 0;}
   .poster-wrap{position:relative;display:inline-block;max-width:100%;}
-  #posterImg{display:none;max-width:100%;max-height:min(48vh,420px);border-radius:20px;box-shadow:0 8px 0 #D9C8B0, 0 14px 22px rgba(0,0,0,.14);}
+  #posterImg{display:none;max-width:100%;max-height:min(48vh,420px);width:auto;height:auto;object-fit:contain;border-radius:20px;box-shadow:0 8px 0 #D9C8B0, 0 14px 22px rgba(0,0,0,.14);}
   #posterFallback{display:block;max-width:100%;max-height:min(48vh,420px);}
   #posterFallback svg{display:block;width:100%;height:auto;max-height:min(48vh,420px);border-radius:20px;box-shadow:0 8px 0 #D9C8B0, 0 14px 22px rgba(0,0,0,.14);}
 
@@ -116,8 +116,15 @@
   .hotspot.visited::before{display:none;}
   .hotspot.visited::after{content:'✓';position:absolute;font-size:1.1rem;font-weight:900;}
   .hotspot.visited .hs-num{display:none;}
+  .hs-label{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);background:#fff;color:#4A2C00;font-size:.78rem;font-weight:700;padding:4px 8px;border-radius:8px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.2);pointer-events:none;opacity:.95;}
+  .hs-label::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:#fff;}
 
   .poster-hint{font-size:.82rem;font-weight:600;color:#7A5A30;text-align:center;background:rgba(255,255,255,.85);padding:7px 14px;border-radius:999px;box-shadow:0 3px 0 rgba(217,200,176,.6);}
+  .poster-legend{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:420px;margin:4px 0;}
+  .poster-legend .lg-item{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:6px 10px;box-shadow:0 2px 0 #D9C8B0;font-size:.82rem;font-weight:600;}
+  .poster-legend .lg-num{width:24px;height:24px;border-radius:50%;background:var(--gold);color:#4A2C00;display:grid;place-items:center;font-size:.8rem;font-weight:800;flex:0 0 24px;}
+  .poster-legend .lg-dot{width:12px;height:12px;border-radius:50%;flex:0 0 12px;}
+  @media(max-width:480px){.hs-label{display:none;}}
 
   .poster-progress{display:flex;align-items:center;gap:10px;width:100%;max-width:420px;font-size:.82rem;font-weight:700;color:#3C2A12;}
   .pp-bar{flex:1;height:10px;background:#E4D5C0;border-radius:999px;overflow:hidden;box-shadow:inset 0 2px 3px rgba(0,0,0,.1);}
@@ -242,12 +249,14 @@
     <div class="poster-scroll">
       <div class="poster-frame">
         <div class="poster-wrap" id="posterWrap">
-          <img id="posterImg" alt="Poster Lapisan Bumi" width="320" height="400">
+          <img id="posterImg" alt="Poster Lapisan Bumi" width="1280" height="1280">
           <div id="posterFallback"></div>
         </div>
       </div>
 
       <div class="poster-hint">👆 Ketuk titik bernomor di poster untuk belajar!</div>
+
+      <div class="poster-legend" id="posterLegend"></div>
 
       <div class="poster-progress">
         <div class="pp-bar"><div class="pp-fill" id="ppFill"></div></div>
@@ -667,6 +676,7 @@ function startPoster(source = 'menu'){
   });
 
   renderHotspots();
+  renderLegend();
 
   document.getElementById('piEmoji').textContent = '🌍';
   document.getElementById('piTitle').textContent = 'Ayo Jelajahi!';
@@ -734,8 +744,25 @@ function renderHotspots(){
     btn.dataset.layer = h.layer;
     btn.innerHTML = `<span class="hs-num">${idx+1}</span>`;
     btn.setAttribute('aria-label', LEVELS[h.layer].theory.title);
+    const lbl = document.createElement('span');
+    lbl.className = 'hs-label';
+    lbl.textContent = LEVELS[h.layer].theory.title;
+    btn.appendChild(lbl);
     btn.addEventListener('click', () => onHotspotClick(h.layer, btn));
     wrap.appendChild(btn);
+  });
+}
+
+function renderLegend(){
+  const el = document.getElementById('posterLegend');
+  if(!el) return;
+  el.innerHTML = '';
+  POSTER_CONFIG.hotspots.forEach((h, idx)=>{
+    const lv = LEVELS[h.layer];
+    const item = document.createElement('div');
+    item.className = 'lg-item';
+    item.innerHTML = `<span class="lg-num">${idx+1}</span><span class="lg-dot" style="background:${lv.color};"></span><span>${lv.name}</span>`;
+    el.appendChild(item);
   });
 }
 
