@@ -411,7 +411,6 @@
         <button class="btn btn-ghost" id="btnProfile">🏅 Profil</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ Atur</button>
       </div>
-      <button class="btn btn-ghost" id="btnChallenge" style="font-size:.9rem;padding:10px 18px;">🎯 Tantangan</button>
       <div class="date-line">📅 <span id="todayDate"></span></div>
     </div>
   </section>
@@ -842,7 +841,6 @@ function renderMenuStars(){
 document.getElementById('btnStart').addEventListener('click',()=>startPoster('menu'));
 document.getElementById('btnProfile').addEventListener('click',()=>go('profile'));
 document.getElementById('btnSettings').addEventListener('click',()=>go('settings'));
-document.getElementById('btnChallenge').addEventListener('click',()=>{ go('challenge'); setTimeout(renderChallenge, 100); });
 
 (function(){
   const bulan=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -1133,10 +1131,10 @@ function renderQuestion(){
   const li = document.getElementById('layerIndicator');
   if(li){
     li.innerHTML = `
-      <img class="li-img" src="poster-bumi.png" alt="${lv.name}">
+      <img class="li-img" src="poster-bumi.png" alt="Lapisan ${game.level+1}">
       <div class="li-text">
-        <div class="li-name">${lv.emoji} ${lv.name}</div>
-        <div class="li-sub">Level ${game.level+1} dari 4 · ${lv.sub}</div>
+        <div class="li-name" style="color:${lv.color};">● Lapisan ${game.level+1}</div>
+        <div class="li-sub">Level ${game.level+1} dari 4</div>
       </div>
     `;
   }
