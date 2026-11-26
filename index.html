@@ -159,6 +159,7 @@
     100%{transform:scale(1.9);opacity:0;}
   }
   .hotspot:hover .dot{transform:translate(-50%,-50%) scale(1.15);}
+  .hotspot .label:hover{transform:translateY(-50%) scale(1.06);box-shadow:0 4px 12px rgba(0,0,0,.25);}
   .hotspot:active .dot{transform:translate(-50%,-50%) scale(.95);}
 
   /* LABEL (keterangan) */
@@ -167,6 +168,7 @@
     top:50%;
     left:calc(50% + 18px);
     transform:translateY(-50%);
+    z-index:4;
     background:#fff;
     color:var(--ink);
     font-size:clamp(.62rem, 2.4vw, .75rem);
@@ -176,8 +178,9 @@
     white-space:nowrap;
     box-shadow:0 3px 0 #D9C8B0, 0 4px 10px rgba(0,0,0,.2);
     display:flex;align-items:center;gap:4px;
-    pointer-events:none;
-    transition:background .3s, color .3s;
+    pointer-events:auto;
+    cursor:pointer;
+    transition:background .3s, color .3s, transform .15s;
     animation:labelFloat 2.4s ease-in-out infinite;
   }
   @keyframes labelFloat{
@@ -530,10 +533,10 @@
 const POSTER_CONFIG = {
   image: 'poster-bumi.png',
   hotspots: [
-    { layer: 0, x: 75.2, y: 11.8, side: 'left', color: '#C68642', label: 'Kerak Bumi' },
-    { layer: 1, x: 69.0, y: 19.3, side: 'left', color: '#FF8C42', label: 'Mantel' },
-    { layer: 2, x: 61.3, y: 32.7, side: 'left', color: '#FF4E3A', label: 'Inti Luar' },
-    { layer: 3, x: 54.1, y: 45.1, side: 'left', color: '#E8B21E', label: 'Inti Dalam' }
+    { layer: 0, x: 75.2, y: 11.8, side: 'right', color: '#C68642', label: 'Kerak Bumi' },
+    { layer: 1, x: 69.0, y: 19.3, side: 'right', color: '#FF8C42', label: 'Mantel' },
+    { layer: 2, x: 61.3, y: 32.7, side: 'right', color: '#FF4E3A', label: 'Inti Luar' },
+    { layer: 3, x: 54.1, y: 45.1, side: 'right', color: '#E8B21E', label: 'Inti Dalam' }
   ]
 };
 
