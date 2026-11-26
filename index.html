@@ -184,6 +184,29 @@
     0%,100%{transform:translateY(-50%);}
     50%{transform:translateY(calc(-50% - 2px));}
   }
+  /* Garis penghubung (line) antara label dan titik */
+  .hotspot .line{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    height:2px;
+    background:var(--hs-color,var(--gold));
+    pointer-events:none;
+    opacity:.85;
+    border-radius:2px;
+  }
+  /* Default: label di kanan titik -> line di kanan titik */
+  .hotspot .line{
+    left:calc(50% + 11px);
+    width:8px;
+  }
+  /* side left: label di kiri titik -> line di kiri titik, lebih panjang */
+  .hotspot[data-side="left"] .line{
+    left:auto;
+    right:calc(50% + 11px);
+    width:60px;
+  }
+
   /* Panah kecil di label */
   .hotspot .label::before{
     content:'';position:absolute;
@@ -195,10 +218,10 @@
     transition:border-right-color .3s;
   }
 
-  /* Label di sisi KIRI (untuk inti dalam) */
+  /* Label di sisi KIRI (untuk inti dalam) - lebih jauh agar tidak menutupi gambar */
   .hotspot[data-side="left"] .label{
     left:auto;
-    right:calc(50% + 18px);
+    right:calc(50% + 78px);
   }
   .hotspot[data-side="left"] .label::before{
     left:auto;right:-5px;
@@ -233,6 +256,9 @@
     color:#1F5A32;
     animation:none;
     transform:translateY(-50%);
+  }
+  .hotspot.visited .line{
+    background:#4CC38A;
   }
   .hotspot.visited .label::before{border-right-color:#C8F5D8;}
   .hotspot[data-side="left"].visited .label::before{
@@ -868,9 +894,10 @@ function renderHotspots(){
     btn.dataset.side = h.side || 'right';
     btn.setAttribute('aria-label', LEVELS[h.layer].theory.title);
     
-    // Struktur: dot + label (keterangan)
+    // Struktur: dot + garis penghubung + label (keterangan)
     btn.innerHTML = `
       <span class="dot"></span>
+      <span class="line"></span>
       <span class="label">${h.label || LEVELS[h.layer].name}</span>
     `;
     
