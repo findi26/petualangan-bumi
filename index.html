@@ -297,6 +297,27 @@
   .layer-indicator .li-text{flex:1;}
   .layer-indicator .li-name{font-weight:700;font-size:1rem;color:var(--purple);}
   .layer-indicator .li-sub{font-size:.8rem;opacity:.7;}
+
+  /* CHALLENGE */
+  .challenge-tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+  .challenge-tabs .tab{padding:8px 14px;border-radius:999px;border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:.85rem;background:#fff;color:var(--ink);box-shadow:0 3px 0 #D9C8B0;}
+  .challenge-tabs .tab.active{background:var(--purple);color:#fff;}
+  .ch-card{background:#fff;border-radius:20px;padding:16px;box-shadow:0 6px 0 #D9C8B0;margin-bottom:12px;}
+  .ch-title{font-size:1.1rem;font-weight:700;color:var(--purple);margin:0 0 8px;}
+  .ch-desc{font-size:.9rem;opacity:.8;margin:0 0 12px;}
+  .ch-slot{background:#FFF8ED;border:2px dashed #D9C8B0;border-radius:12px;padding:10px;min-height:44px;margin-bottom:8px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .2s;}
+  .ch-slot.filled{background:#C8F5D8;border-style:solid;border-color:#4CC38A;}
+  .ch-slot.selected{background:#FFF3B0;border-color:var(--gold);}
+  .ch-chip{background:var(--purple);color:#fff;border-radius:12px;padding:8px 12px;font-weight:600;font-size:.9rem;cursor:pointer;user-select:none;display:inline-block;margin:4px;}
+  .ch-chip.selected{background:var(--gold);color:var(--ink);}
+  .ch-chip.placed{opacity:.4;pointer-events:none;}
+  .ch-zone{background:#FFF8ED;border:2px dashed #D9C8B0;border-radius:12px;padding:10px;min-height:60px;margin-bottom:8px;cursor:pointer;position:relative;}
+  .ch-zone.filled{background:#C8F5D8;border-style:solid;border-color:#4CC38A;}
+  .ch-zone .zlabel{font-size:.8rem;opacity:.6;}
+  .ch-result{font-size:1.1rem;font-weight:700;text-align:center;padding:12px;border-radius:12px;margin-top:12px;}
+  .ch-result.ok{background:#C8F5D8;color:#1F5A32;}
+  .ch-result.fail{background:#FFD9D6;color:#922018;}
+  .ch-btn{margin-top:10px;}
   .progress{display:flex;gap:8px;justify-content:center;flex:0 0 auto;}
   .dot-progress{width:12px;height:12px;border-radius:50%;background:#fff;opacity:.45;transition:.3s;}
   .dot-progress.on{background:var(--gold);opacity:1;transform:scale(1.25);box-shadow:0 0 0 3px rgba(255,204,0,.35);}
@@ -390,6 +411,7 @@
         <button class="btn btn-ghost" id="btnProfile">🏅 Profil</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ Atur</button>
       </div>
+      <button class="btn btn-ghost" id="btnChallenge" style="font-size:.9rem;padding:10px 18px;">🎯 Tantangan</button>
       <div class="date-line">📅 <span id="todayDate"></span></div>
     </div>
   </section>
@@ -526,6 +548,21 @@
       <div class="toggle-row"><span style="font-size:.9rem;opacity:.7;">Versi 1.6 · 26 November 2026</span></div>
       <button class="btn btn-ghost" id="btnReset" style="width:100%;margin-top:10px;color:#C0392B;">🗑️ Reset Progres</button>
     </div>
+  </section>
+
+  <!-- CHALLENGE -->
+  <section class="screen" id="screen-challenge">
+    <header class="topbar">
+      <button class="icon-btn" data-nav="menu">←</button>
+      <h2>Tantangan</h2>
+      <div style="width:48px"></div>
+    </header>
+    <div class="challenge-tabs">
+      <button class="tab active" data-ctab="urut">🔢 Mengurutkan</button>
+      <button class="tab" data-ctab="cocok">🔗 Mencocokkan</button>
+      <button class="tab" data-ctab="drag">🎯 Drag & Drop</button>
+    </div>
+    <div id="challengeContent" style="flex:1;overflow-y:auto;"></div>
   </section>
 
 </div>
@@ -764,7 +801,7 @@ const LEVELS = [
 /* ============================================================
    5. NAVIGASI
    ============================================================ */
-const screens = ['menu','poster','map','game','reward','profile','settings'];
+const screens = ['menu','poster','map','game','reward','profile','settings','challenge'];
 function go(name){
   screens.forEach(s=>document.getElementById('screen-'+s).classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
@@ -787,6 +824,7 @@ function renderMenuStars(){
 document.getElementById('btnStart').addEventListener('click',()=>startPoster('menu'));
 document.getElementById('btnProfile').addEventListener('click',()=>go('profile'));
 document.getElementById('btnSettings').addEventListener('click',()=>go('settings'));
+document.getElementById('btnChallenge').addEventListener('click',()=>go('challenge'));
 
 (function(){
   const bulan=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -1262,6 +1300,221 @@ function startMusic(){
   }, 620);
 }
 document.addEventListener('click',()=>{ AC(); startMusic(); }, {once:true});
+
+/* ============================================================
+   13. TANTANGAN (CHALLENGES)
+   ============================================================ */
+let challengeTab = 'urut';
+let chState = {};
+
+function renderChallenge(){
+  const c = document.getElementById('challengeContent');
+  if(!c) return;
+  // tabs
+  document.querySelectorAll('.challenge-tabs .tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.ctab === challengeTab);
+    t.onclick = ()=>{ challengeTab = t.dataset.ctab; renderChallenge(); };
+  });
+  c.innerHTML = '';
+  if(challengeTab === 'urut') renderChUrut(c);
+  else if(challengeTab === 'cocok') renderChCocok(c);
+  else renderChDrag(c);
+}
+
+/* --- Mengurutkan --- */
+function renderChUrut(c){
+  const items = ['Kerak Bumi','Mantel','Inti Luar','Inti Dalam'];
+  const shuffled = items.slice().sort(()=>Math.random()-.5);
+  chState.urut = { selected: null, placed: [null,null,null,null], pool: shuffled };
+  c.innerHTML = `
+    <div class="ch-card">
+      <h3 class="ch-title">🔢 Urutkan Lapisan Bumi</h3>
+      <p class="ch-desc">Susun lapisan bumi dari paling luar ke paling dalam. Ketuk item, lalu ketuk slot.</p>
+      <div id="urutSlots"></div>
+      <div id="urutPool" style="margin-top:10px;"></div>
+      <div id="urutResult"></div>
+      <button class="btn btn-green ch-btn" id="urutCheck">Cek Jawaban</button>
+      <button class="btn btn-ghost ch-btn" id="urutReset" style="margin-left:8px;">Ulang</button>
+    </div>`;
+  renderUrutUI();
+  document.getElementById('urutCheck').onclick = checkUrut;
+  document.getElementById('urutReset').onclick = ()=>renderChUrut(c);
+}
+
+function renderUrutUI(){
+  const st = chState.urut;
+  const slotsEl = document.getElementById('urutSlots');
+  const poolEl = document.getElementById('urutPool');
+  slotsEl.innerHTML = '';
+  st.placed.forEach((v,i)=>{
+    const d = document.createElement('div');
+    d.className = 'ch-slot' + (v ? ' filled' : '') + (st.selectedSlot===i ? ' selected' : '');
+    d.innerHTML = v ? `<span>${v}</span>` : `<span style="opacity:.5;">Slot ${i+1}</span>`;
+    d.onclick = ()=>{ if(st.selected){ st.placed[i]=st.selected; st.selected=null; renderUrutUI(); } else if(v){ st.placed[i]=null; renderUrutUI(); } };
+    slotsEl.appendChild(d);
+  });
+  poolEl.innerHTML = '';
+  st.pool.forEach((it)=>{
+    if(st.placed.includes(it)) return;
+    const chip = document.createElement('span');
+    chip.className = 'ch-chip' + (st.selected===it ? ' selected' : '');
+    chip.textContent = it;
+    chip.onclick = ()=>{ st.selected = (st.selected===it ? null : it); renderUrutUI(); };
+    poolEl.appendChild(chip);
+  });
+}
+
+function checkUrut(){
+  const st = chState.urut;
+  const correct = ['Kerak Bumi','Mantel','Inti Luar','Inti Dalam'];
+  const ok = st.placed.every((v,i)=>v===correct[i]);
+  const res = document.getElementById('urutResult');
+  res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? '✅ Benar! Urutan sudah tepat.' : '❌ Belum tepat. Coba lagi!'}</div>`;
+}
+
+/* --- Mencocokkan --- */
+function renderChCocok(c){
+  const pairs = [
+    { layer: 'Kerak Bumi', desc: 'Lapisan paling luar, tempat kehidupan' },
+    { layer: 'Mantel', desc: 'Lapisan paling tebal, batuan panas' },
+    { layer: 'Inti Luar', desc: 'Logam cair, pembentuk medan magnet' },
+    { layer: 'Inti Dalam', desc: 'Besi & nikel padat, suhu 5000-6000°C' }
+  ];
+  const layers = pairs.map(p=>p.layer).sort(()=>Math.random()-.5);
+  const descs = pairs.map(p=>p.desc).sort(()=>Math.random()-.5);
+  chState.cocok = { selectedLayer: null, selectedDesc: null, matches: {}, layers, descs, pairs };
+  c.innerHTML = `
+    <div class="ch-card">
+      <h3 class="ch-title">🔗 Cocokkan Lapisan dengan Ciri-cirinya</h3>
+      <p class="ch-desc">Ketuk lapisan, lalu ketuk ciri yang sesuai.</p>
+      <div class="grid2">
+        <div>
+          <h4 style="margin:0 0 6px;">Lapisan</h4>
+          <div id="cocokLayers"></div>
+        </div>
+        <div>
+          <h4 style="margin:0 0 6px;">Ciri-ciri</h4>
+          <div id="cocokDescs"></div>
+        </div>
+      </div>
+      <div id="cocokResult"></div>
+      <button class="btn btn-green ch-btn" id="cocokCheck">Cek Jawaban</button>
+      <button class="btn btn-ghost ch-btn" id="cocokReset" style="margin-left:8px;">Ulang</button>
+    </div>`;
+  renderCocokUI();
+  document.getElementById('cocokCheck').onclick = checkCocok;
+  document.getElementById('cocokReset').onclick = ()=>renderChCocok(c);
+}
+
+function renderCocokUI(){
+  const st = chState.cocok;
+  const L = document.getElementById('cocokLayers');
+  const D = document.getElementById('cocokDescs');
+  L.innerHTML = ''; D.innerHTML = '';
+  st.layers.forEach(l=>{
+    const matched = Object.values(st.matches).includes(l);
+    const chip = document.createElement('div');
+    chip.className = 'ch-chip' + (st.selectedLayer===l ? ' selected' : '') + (matched ? ' placed' : '');
+    chip.textContent = l;
+    chip.onclick = ()=>{ if(matched) return; st.selectedLayer = (st.selectedLayer===l ? null : l); tryMatch(); renderCocokUI(); };
+    L.appendChild(chip);
+  });
+  st.descs.forEach(d=>{
+    const matched = Object.keys(st.matches).includes(d);
+    const chip = document.createElement('div');
+    chip.className = 'ch-chip' + (st.selectedDesc===d ? ' selected' : '') + (matched ? ' placed' : '');
+    chip.textContent = d;
+    chip.onclick = ()=>{ if(matched) return; st.selectedDesc = (st.selectedDesc===d ? null : d); tryMatch(); renderCocokUI(); };
+    D.appendChild(chip);
+  });
+}
+
+function tryMatch(){
+  const st = chState.cocok;
+  if(st.selectedLayer && st.selectedDesc){
+    st.matches[st.selectedDesc] = st.selectedLayer;
+    st.selectedLayer = null;
+    st.selectedDesc = null;
+  }
+}
+
+function checkCocok(){
+  const st = chState.cocok;
+  const correct = {};
+  st.pairs.forEach(p=>{ correct[p.desc] = p.layer; });
+  let ok = true;
+  st.descs.forEach(d=>{
+    if(st.matches[d] !== correct[d]) ok = false;
+  });
+  if(Object.keys(st.matches).length !== st.descs.length) ok = false;
+  const res = document.getElementById('cocokResult');
+  res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? '✅ Benar! Semua cocok.' : '❌ Ada yang belum cocok. Coba lagi!'}</div>`;
+}
+
+/* --- Drag & Drop (tap to place) --- */
+function renderChDrag(c){
+  const zones = [
+    { id:'z0', label:'Lapisan paling luar (Kerak)', answer:'Kerak Bumi' },
+    { id:'z1', label:'Lapisan paling tebal (Mantel)', answer:'Mantel' },
+    { id:'z2', label:'Logam cair, medan magnet', answer:'Inti Luar' },
+    { id:'z3', label:'Pusat bumi, padat', answer:'Inti Dalam' }
+  ];
+  const items = ['Kerak Bumi','Mantel','Inti Luar','Inti Dalam'].sort(()=>Math.random()-.5);
+  chState.drag = { selected: null, placed: {}, zones, items };
+  c.innerHTML = `
+    <div class="ch-card">
+      <h3 class="ch-title">🎯 Seret (Tap) ke Tempat yang Tepat</h3>
+      <p class="ch-desc">Ketuk item, lalu ketuk zona yang sesuai.</p>
+      <div id="dragZones"></div>
+      <div id="dragItems" style="margin-top:10px;"></div>
+      <div id="dragResult"></div>
+      <button class="btn btn-green ch-btn" id="dragCheck">Cek Jawaban</button>
+      <button class="btn btn-ghost ch-btn" id="dragReset" style="margin-left:8px;">Ulang</button>
+    </div>`;
+  renderDragUI();
+  document.getElementById('dragCheck').onclick = checkDrag;
+  document.getElementById('dragReset').onclick = ()=>renderChDrag(c);
+}
+
+function renderDragUI(){
+  const st = chState.drag;
+  const zonesEl = document.getElementById('dragZones');
+  const itemsEl = document.getElementById('dragItems');
+  zonesEl.innerHTML = '';
+  st.zones.forEach(z=>{
+    const placed = Object.keys(st.placed).find(k=>st.placed[k]===z.id);
+    const d = document.createElement('div');
+    d.className = 'ch-zone' + (placed ? ' filled' : '') + (st.selectedZone===z.id ? ' selected' : '');
+    d.innerHTML = `<div class="zlabel">${z.label}</div><div>${placed ? placed : '<span style="opacity:.5;">ketuk untuk tempatkan</span>'}</div>`;
+    d.onclick = ()=>{ if(st.selected){ st.placed[st.selected]=z.id; st.selected=null; renderDragUI(); } else if(placed){ delete st.placed[placed]; renderDragUI(); } };
+    zonesEl.appendChild(d);
+  });
+  itemsEl.innerHTML = '';
+  st.items.forEach(it=>{
+    if(Object.prototype.hasOwnProperty.call(st.placed, it)) return;
+    const chip = document.createElement('span');
+    chip.className = 'ch-chip' + (st.selected===it ? ' selected' : '');
+    chip.textContent = it;
+    chip.onclick = ()=>{ st.selected = (st.selected===it ? null : it); renderDragUI(); };
+    itemsEl.appendChild(chip);
+  });
+}
+
+function checkDrag(){
+  const st = chState.drag;
+  let ok = true;
+  st.zones.forEach(z=>{
+    const placed = Object.keys(st.placed).find(k=>st.placed[k]===z.id);
+    if(placed !== z.answer) ok = false;
+  });
+  if(Object.keys(st.placed).length !== st.zones.length) ok = false;
+  const res = document.getElementById('dragResult');
+  res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? '✅ Benar! Semua tepat.' : '❌ Ada yang belum tepat. Coba lagi!'}</div>`;
+}
+
+/* Hook go() to render challenge screen */
+const _goOrig = go;
+go = function(name){ _goOrig(name); if(name === 'challenge') setTimeout(renderChallenge, 50); };
 
 /* ============================================================
    13. INIT
