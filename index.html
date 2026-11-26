@@ -292,6 +292,11 @@
 
   /* GAME */
   .game-body{flex:1;display:flex;flex-direction:column;gap:14px;min-height:0;}
+  .layer-indicator{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:8px 12px;box-shadow:0 4px 0 #D9C8B0;flex:0 0 auto;}
+  .layer-indicator .li-img{width:48px;height:48px;border-radius:12px;object-fit:cover;border:2px solid #E4D5C0;flex:0 0 48px;}
+  .layer-indicator .li-text{flex:1;}
+  .layer-indicator .li-name{font-weight:700;font-size:1rem;color:var(--purple);}
+  .layer-indicator .li-sub{font-size:.8rem;opacity:.7;}
   .progress{display:flex;gap:8px;justify-content:center;flex:0 0 auto;}
   .dot-progress{width:12px;height:12px;border-radius:50%;background:#fff;opacity:.45;transition:.3s;}
   .dot-progress.on{background:var(--gold);opacity:1;transform:scale(1.25);box-shadow:0 0 0 3px rgba(255,204,0,.35);}
@@ -461,6 +466,7 @@
       <div class="chip" id="gameStars">⭐ <span>0</span></div>
     </header>
     <div class="game-body">
+      <div class="layer-indicator" id="layerIndicator"></div>
       <div class="progress" id="progress"></div>
       <div class="speech-row">
         <div class="molie-wrap" data-molie="100"></div>
@@ -1056,6 +1062,18 @@ function renderQuestion(){
   const lv=LEVELS[game.level];
   const q=lv.questions[game.qi];
   game.locked=false;
+
+  // Indikator lapisan saat ini
+  const li = document.getElementById('layerIndicator');
+  if(li){
+    li.innerHTML = `
+      <img class="li-img" src="poster-bumi.png" alt="${lv.name}">
+      <div class="li-text">
+        <div class="li-name">${lv.emoji} ${lv.name}</div>
+        <div class="li-sub">Level ${game.level+1} dari 4 · ${lv.sub}</div>
+      </div>
+    `;
+  }
 
   const prog=document.getElementById('progress');
   prog.innerHTML='';
