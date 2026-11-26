@@ -292,8 +292,8 @@
 
   /* GAME */
   .game-body{flex:1;display:flex;flex-direction:column;gap:14px;min-height:0;}
-  .layer-indicator{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:8px 12px;box-shadow:0 4px 0 #D9C8B0;flex:0 0 auto;}
-  .layer-indicator .li-img{width:96px;height:96px;border-radius:16px;object-fit:cover;border:3px solid #E4D5C0;flex:0 0 96px;}
+  .layer-indicator{display:flex;flex-direction:column;align-items:center;gap:8px;background:#fff;border-radius:16px;padding:10px 12px;box-shadow:0 4px 0 #D9C8B0;flex:0 0 auto;}
+  .layer-indicator .li-img{width:100%;max-width:260px;height:auto;border-radius:16px;object-fit:contain;border:3px solid #E4D5C0;flex:0 0 auto;}
   .layer-indicator .li-text{flex:1;}
   .layer-indicator .li-name{font-weight:700;font-size:1rem;color:var(--purple);}
   .layer-indicator .li-sub{font-size:.8rem;opacity:.7;}
@@ -679,12 +679,14 @@ const LEVELS = [
       fact:'Kerak benua memiliki ketebalan 30–70 km, tersusun dari batuan granit, dan massa jenisnya lebih rendah dari kerak samudra. Kerak samudra lebih tipis dan lebih padat.'
     },
     questions:[
-      { q:'Lapisan paling luar bumi, tempat kita tinggal, disebut…',
-        opts:[{e:'🟫',t:'Kerak Bumi'},{e:'🟧',t:'Mantel'},{e:'🟥',t:'Inti Luar'},{e:'🟡',t:'Inti Dalam'}], a:0 },
-      { q:'Hewan kecil yang suka tinggal di dalam tanah adalah…',
-        opts:[{e:'🐦',t:'Burung'},{e:'🪱',t:'Cacing'},{e:'🐟',t:'Ikan'},{e:'🦋',t:'Kupu-kupu'}], a:1 },
-      { q:'Kerak bumi adalah lapisan bumi yang paling…',
-        opts:[{e:'⬇️',t:'Dalam'},{e:'↔️',t:'Tengah'},{e:'⬆️',t:'Luar'},{e:'🔽',t:'Bawah'}], a:2 }
+      { q:'Kerak bumi dibagi menjadi dua jenis. Jenis kerak yang membentuk daratan, pegunungan, dan dataran tinggi adalah…',
+        opts:[{e:'🟫',t:'Kerak Benua'},{e:'🟧',t:'Kerak Samudra'},{e:'🟥',t:'Mantel'},{e:'🟡',t:'Inti Luar'}], a:0 },
+      { q:'Ketebalan kerak benua sekitar…',
+        opts:[{e:'🟫',t:'10 – 20 km'},{e:'🟧',t:'30 – 70 km'},{e:'🟥',t:'100 – 200 km'},{e:'🟡',t:'500 km'}], a:1 },
+      { q:'Kerak benua tersusun dari batuan…',
+        opts:[{e:'🟫',t:'Granit'},{e:'🟧',t:'Magma'},{e:'🟥',t:'Logam cair'},{e:'🟡',t:'Es'}], a:0 },
+      { q:'Kerak samudra berada di bawah…',
+        opts:[{e:'🟫',t:'Lautan dan samudra'},{e:'🟧',t:'Pegunungan'},{e:'🟥',t:'Dataran tinggi'},{e:'🟡',t:'Hutan'}], a:0 }
     ]
   },
   {
@@ -696,14 +698,16 @@ const LEVELS = [
       fact:'Suhu mantel mencapai 4.000°C. Tersusun dari batuan kaya magnesium dan besi. Di dalam mantel terjadi arus konveksi yang menggerakkan lempeng tektonik.'
     },
     questions:[
-      { q:'Lapisan yang ada tepat di bawah kerak bumi disebut…',
-        opts:[{e:'🟧',t:'Mantel'},{e:'🟥',t:'Inti Luar'},{e:'🟡',t:'Inti Dalam'},{e:'☁️',t:'Awan'}], a:0 },
-      { q:'Batuan panas yang cair di dalam bumi disebut…',
-        opts:[{e:'🧊',t:'Es'},{e:'🔥',t:'Magma'},{e:'💧',t:'Air'},{e:'🏖️',t:'Pasir'}], a:1 },
-      { q:'Gunung berapi bisa meletus karena…',
-        opts:[{e:'🌧️',t:'Hujan turun'},{e:'🌋',t:'Magma naik ke permukaan'},{e:'💨',t:'Angin kencang'},{e:'🌍',t:'Bumi berputar'}], a:1 },
-      { q:'Mantel bumi terbuat dari…',
-        opts:[{e:'🪨',t:'Batuan panas'},{e:'☁️',t:'Kapas'},{e:'🪵',t:'Kayu'},{e:'🪟',t:'Kaca'}], a:0 }
+      { q:'Mantel bumi adalah lapisan yang terletak tepat di bawah…',
+        opts:[{e:'🟧',t:'Kerak bumi'},{e:'🟥',t:'Inti luar'},{e:'🟡',t:'Inti dalam'},{e:'☁️',t:'Awan'}], a:0 },
+      { q:'Ketebalan mantel bumi sekitar…',
+        opts:[{e:'🟧',t:'100 km'},{e:'🟥',t:'1.000 km'},{e:'🟡',t:'2.900 km'},{e:'🟫',t:'5.000 km'}], a:2 },
+      { q:'Suhu di mantel bumi bisa mencapai…',
+        opts:[{e:'🟧',t:'1.000°C'},{e:'🟥',t:'4.000°C'},{e:'🟡',t:'6.000°C'},{e:'🟫',t:'10.000°C'}], a:1 },
+      { q:'Apa yang menyebabkan lempeng tektonik bergerak?',
+        opts:[{e:'🟧',t:'Arus konveksi'},{e:'🟥',t:'Angin'},{e:'🟡',t:'Hujan'},{e:'🟫',t:'Gravitasi'}], a:0 },
+      { q:'Mantel bumi tersusun dari batuan kaya…',
+        opts:[{e:'🟧',t:'Magnesium dan besi'},{e:'🟥',t:'Granit'},{e:'🟡',t:'Es'},{e:'🟫',t:'Pasir'}], a:0 }
     ]
   },
   {
@@ -715,14 +719,16 @@ const LEVELS = [
       fact:'Pergerakan logam cair di inti luar berperan penting dalam pembentukan medan magnet Bumi yang melindungi dari partikel bermuatan Matahari.'
     },
     questions:[
-      { q:'Lapisan yang ada di bawah mantel disebut…',
+      { q:'Lapisan yang berada di bawah mantel bumi disebut…',
         opts:[{e:'🟥',t:'Inti Luar'},{e:'🟫',t:'Kerak'},{e:'🟡',t:'Inti Dalam'},{e:'🌱',t:'Rumput'}], a:0 },
       { q:'Inti luar bumi berwujud…',
-        opts:[{e:'🧱',t:'Padat'},{e:'💧',t:'Cair'},{e:'💨',t:'Gas'},{e:'🍚',t:'Bubuk'}], a:1 },
-      { q:'Inti luar bumi terbuat dari logam…',
-        opts:[{e:'🥇',t:'Emas & Perak'},{e:'⚙️',t:'Besi & Nikel'},{e:'🪵',t:'Kayu & Batu'},{e:'💧',t:'Air & Udara'}], a:1 },
-      { q:'Medan magnet bumi berasal dari lapisan…',
-        opts:[{e:'🟫',t:'Kerak'},{e:'🟧',t:'Mantel'},{e:'🟥',t:'Inti Luar'},{e:'☁️',t:'Awan'}], a:2 }
+        opts:[{e:'🟥',t:'Cair'},{e:'🟫',t:'Padat'},{e:'🟡',t:'Gas'},{e:'🟧',t:'Plasma'}], a:0 },
+      { q:'Inti luar bumi tersusun terutama dari…',
+        opts:[{e:'🟥',t:'Besi dan nikel'},{e:'🟫',t:'Granit'},{e:'🟡',t:'Pasir'},{e:'🟧',t:'Air'}], a:0 },
+      { q:'Medan magnet bumi terbentuk karena…',
+        opts:[{e:'🟥',t:'Pergerakan logam cair di inti luar'},{e:'🟫',t:'Angin di permukaan'},{e:'🟡',t:'Hujan'},{e:'🟧',t:'Rotasi bumi saja'}], a:0 },
+      { q:'Medan magnet bumi berfungsi untuk…',
+        opts:[{e:'🟥',t:'Melindungi dari partikel Matahari'},{e:'🟫',t:'Membuat cuaca'},{e:'🟡',t:'Menumbuhkan tanaman'},{e:'🟧',t:'Mengatur pasang surut'}], a:0 }
     ]
   },
   {
@@ -737,16 +743,20 @@ const LEVELS = [
       { q:'Lapisan paling dalam bumi adalah…',
         opts:[{e:'🟡',t:'Inti Dalam'},{e:'🟧',t:'Mantel'},{e:'🟫',t:'Kerak'},{e:'🟥',t:'Inti Luar'}], a:0 },
       { q:'Inti dalam bumi berwujud…',
-        opts:[{e:'💧',t:'Cair'},{e:'🧱',t:'Padat'},{e:'💨',t:'Gas'},{e:'☁️',t:'Uap'}], a:1 },
-      { q:'Suhu di inti dalam bumi sangat…',
-        opts:[{e:'🧊',t:'Dingin'},{e:'❄️',t:'Sejuk'},{e:'🔥',t:'Panas sekali'},{e:'☀️',t:'Hangat'}], a:2 },
+        opts:[{e:'🟡',t:'Padat'},{e:'🟥',t:'Cair'},{e:'🟧',t:'Gas'},{e:'🟫',t:'Plasma'}], a:0 },
+      { q:'Mengapa inti dalam tetap padat meskipun sangat panas?',
+        opts:[{e:'🟡',t:'Karena tekanan sangat besar'},{e:'🟥',t:'Karena suhu rendah'},{e:'🟧',t:'Karena terbuat dari es'},{e:'🟫',t:'Karena dingin'}], a:0 },
+      { q:'Suhu inti dalam sekitar…',
+        opts:[{e:'🟡',t:'5.000 – 6.000°C'},{e:'🟥',t:'1.000°C'},{e:'🟧',t:'3.000°C'},{e:'🟫',t:'10.000°C'}], a:0 },
+      { q:'Inti dalam tersusun terutama dari…',
+        opts:[{e:'🟡',t:'Besi dan nikel'},{e:'🟥',t:'Granit'},{e:'🟧',t:'Pasir'},{e:'🟫',t:'Air'}], a:0 },
       { q:'Bumi tersusun dari berapa lapisan utama?',
-        opts:[{e:'2️⃣',t:'2 lapisan'},{e:'3️⃣',t:'3 lapisan'},{e:'4️⃣',t:'4 lapisan'},{e:'5️⃣',t:'5 lapisan'}], a:2 },
+        opts:[{e:'🟡',t:'4 lapisan'},{e:'🟥',t:'2 lapisan'},{e:'🟧',t:'3 lapisan'},{e:'🟫',t:'5 lapisan'}], a:0 },
       { q:'Urutan lapisan bumi dari luar ke dalam adalah…',
-        opts:[{e:'🟫🟧🟥🟡',t:'Kerak → Mantel → Inti Luar → Inti Dalam'},
-              {e:'🟧🟫🟡🟥',t:'Mantel → Kerak → Inti Dalam → Inti Luar'},
-              {e:'🟡🟥🟧🟫',t:'Inti Dalam → Inti Luar → Mantel → Kerak'},
-              {e:'🟫🟥🟧🟡',t:'Kerak → Inti Luar → Mantel → Inti Dalam'}], a:0 }
+        opts:[{e:'🟡',t:'Kerak → Mantel → Inti Luar → Inti Dalam'},
+              {e:'🟥',t:'Mantel → Kerak → Inti Dalam → Inti Luar'},
+              {e:'🟧',t:'Inti Dalam → Inti Luar → Mantel → Kerak'},
+              {e:'🟫',t:'Kerak → Inti Luar → Mantel → Inti Dalam'}], a:0 }
     ]
   }
 ];
