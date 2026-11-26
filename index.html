@@ -653,14 +653,32 @@ const sfx = {
   win(){ [523,659,784,1046].forEach((f,i)=>tone(f,.22,'triangle',.15,i*.11)); }
 };
 
+let cachedVoices = [];
+function loadVoices(){
+  try{ cachedVoices = speechSynthesis.getVoices(); }catch(e){ cachedVoices=[]; }
+}
+if(typeof speechSynthesis !== 'undefined'){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function pickIndonesianVoice(){
+  if(!cachedVoices.length) loadVoices();
+  // Prefer id-ID voices
+  let v = cachedVoices.find(v=>v.lang === 'id-ID');
+  if(!v) v = cachedVoices.find(v=>v.lang && v.lang.toLowerCase().startsWith('id'));
+  if(!v) v = cachedVoices.find(v=>v.name && /indonesia|bahasa/i.test(v.name));
+  return v || null;
+}
+
 function speak(text){
   if(!state.voice || !state.sound) return;
   try{
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
     u.lang='id-ID'; u.rate=.95; u.pitch=1.35;
-    const v=speechSynthesis.getVoices().find(v=>v.lang.startsWith('id'));
-    if(v) u.voice=v;
+    const v = pickIndonesianVoice();
+    if(v) u.voice = v;
     speechSynthesis.speak(u);
   }catch(e){}
 }
