@@ -554,7 +554,7 @@
   <section class="screen" id="screen-challenge">
     <header class="topbar">
       <button class="icon-btn" data-nav="menu">←</button>
-      <h2>Tantangan</h2>
+      <h2 id="challengeTitle">Tantangan</h2>
       <div style="width:48px"></div>
     </header>
     <div class="challenge-tabs">
@@ -1187,6 +1187,13 @@ function nextQuestion(){
   }
 }
 
+const LEVEL_CHALLENGES = {
+  0: ['urut'],
+  1: ['cocok'],
+  2: ['drag'],
+  3: ['urut','cocok']
+};
+
 function finishLevel(){
   const lv=LEVELS[game.level];
   let stars = game.mistakes===0 ? 3 : (game.mistakes===1 ? 2 : 1);
@@ -1194,6 +1201,19 @@ function finishLevel(){
   if(stars > prev) state.levelStars[game.level]=stars;
   state.save();
 
+  // Simpan data reward untuk nanti
+  game.rewardData = { stars, prev, lv, isLast: game.level===LEVELS.length-1 };
+
+  // Mulai tantangan sesuai level
+  game.challengeQueue = LEVEL_CHALLENGES[game.level].slice();
+  game.challengeIndex = 0;
+  go('challenge');
+  setTimeout(()=>renderChallenge(), 100);
+}
+
+function showReward(){
+  const rd = game.rewardData;
+  const { stars, prev, lv, isLast } = rd;
   document.getElementById('rewardTitle').textContent = stars===3 ? 'LUAR BIASA!' : (stars===2 ? 'HEBAT!' : 'BAGUS!');
   const rs=[document.getElementById('rs1'),document.getElementById('rs2'),document.getElementById('rs3')];
   rs.forEach(r=>{ r.classList.remove('lit'); r.style.animation='none'; });
@@ -1212,7 +1232,6 @@ function finishLevel(){
   }
 
   const nextBtn=document.getElementById('btnNext');
-  const isLast = game.level===LEVELS.length-1;
   nextBtn.textContent = isLast ? '🏠 Selesai' : '➡️ Lanjut';
   nextBtn.onclick=()=>{
     if(isLast){ go('menu'); }
@@ -1220,7 +1239,9 @@ function finishLevel(){
   };
   document.getElementById('btnRetry').onclick=()=>startQuiz(game.level);
 
-  setTimeout(()=>{ go('reward'); sfx.win(); confettiBurst(30); }, stars*380+450);
+  go('reward');
+  sfx.win();
+  confettiBurst(30);
 }
 
 /* ============================================================
@@ -1309,15 +1330,51 @@ let chState = {};
 function renderChallenge(){
   const c = document.getElementById('challengeContent');
   if(!c) return;
-  // tabs
-  document.querySelectorAll('.challenge-tabs .tab').forEach(t=>{
-    t.classList.toggle('active', t.dataset.ctab === challengeTab);
-    t.onclick = ()=>{ challengeTab = t.dataset.ctab; renderChallenge(); };
-  });
+  // Update header title with current layer (if in level flow)
+  const titleEl = document.getElementById('challengeTitle');
+  if(titleEl){
+    if(game && game.level !== undefined){
+      const lv = LEVELS[game.level];
+      titleEl.textContent = 'Tantangan · ' + lv.name;
+    } else {
+      titleEl.textContent = 'Tantangan';
+    }
+  }
+  const tabs = document.querySelector('.challenge-tabs');
+  const inLevelFlow = !!(game && game.challengeQueue);
+  if(inLevelFlow){
+    const queue = game.challengeQueue;
+    const idx = game.challengeIndex || 0;
+    challengeTab = queue[idx] || 'urut';
+    if(tabs) tabs.style.display = 'none';
+  } else {
+    // Free play: show tabs
+    if(tabs) tabs.style.display = 'flex';
+  }
   c.innerHTML = '';
   if(challengeTab === 'urut') renderChUrut(c);
   else if(challengeTab === 'cocok') renderChCocok(c);
   else renderChDrag(c);
+  // Wire tabs in free play
+  if(!inLevelFlow){
+    document.querySelectorAll('.challenge-tabs .tab').forEach(t=>{
+      t.classList.toggle('active', t.dataset.ctab === challengeTab);
+      t.onclick = ()=>{ challengeTab = t.dataset.ctab; renderChallenge(); };
+    });
+  }
+}
+
+function onChallengeComplete(){
+  // Advance queue only during level flow
+  if(game && game.challengeQueue){
+    game.challengeIndex = (game.challengeIndex || 0) + 1;
+    const queue = game.challengeQueue || [];
+    if(game.challengeIndex < queue.length){
+      setTimeout(()=>renderChallenge(), 200);
+    } else {
+      setTimeout(()=>showReward(), 600);
+    }
+  }
 }
 
 /* --- Mengurutkan --- */
@@ -1369,6 +1426,7 @@ function checkUrut(){
   const ok = st.placed.every((v,i)=>v===correct[i]);
   const res = document.getElementById('urutResult');
   res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? 'Benar! Urutan sudah tepat.' : 'Belum tepat. Coba lagi!'}</div>`;
+  if(ok) onChallengeComplete();
 }
 
 /* --- Mencocokkan --- */
@@ -1448,6 +1506,7 @@ function checkCocok(){
   if(Object.keys(st.matches).length !== st.descs.length) ok = false;
   const res = document.getElementById('cocokResult');
   res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? 'Benar! Semua cocok.' : 'Ada yang belum cocok. Coba lagi!'}</div>`;
+  if(ok) onChallengeComplete();
 }
 
 /* --- Drag & Drop (tap to place) --- */
@@ -1509,6 +1568,7 @@ function checkDrag(){
   if(Object.keys(st.placed).length !== st.zones.length) ok = false;
   const res = document.getElementById('dragResult');
   res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? 'Benar! Semua tepat.' : 'Ada yang belum tepat. Coba lagi!'}</div>`;
+  if(ok) onChallengeComplete();
 }
 
 /* Hook go() to render challenge screen */
