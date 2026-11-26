@@ -51,6 +51,11 @@
   .icon-btn.off{opacity:.4;}
   .chip{background:#fff;border-radius:999px;padding:10px 18px;font-weight:600;font-size:1.05rem;box-shadow:0 4px 0 #D9C8B0;display:flex;align-items:center;gap:6px;}
 
+  /* MODAL */
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:200;padding:16px;animation:fadeIn .2s;}
+  .modal{background:#fff;border-radius:20px;padding:20px;max-width:460px;width:100%;box-shadow:0 8px 0 #D9C8B0,0 14px 22px rgba(0,0,0,.18);}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
   /* MENU */
   #screen-menu{justify-content:space-between;align-items:center;text-align:center;}
   .menu-top{display:flex;gap:10px;width:100%;align-items:center;}
@@ -299,8 +304,11 @@
   .layer-indicator .li-sub{font-size:.8rem;opacity:.7;}
   .layer-indicator .li-imgwrap{position:relative;display:inline-block;max-width:180px;width:100%;}
   .layer-indicator .li-imgwrap .li-img{max-width:100%;}
-  .layer-indicator .li-dot{position:absolute;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px rgba(255,255,255,.6),0 2px 6px rgba(0,0,0,.4);transform:translate(-50%,-50%);pointer-events:none;z-index:2;animation:dotPulse 1.5s ease-in-out infinite;}
-  @keyframes dotPulse{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.25);}}
+  .layer-indicator .li-molie{position:absolute;transform:translate(-50%,-100%);pointer-events:none;z-index:3;animation:molieBounce 1.6s ease-in-out infinite;}
+  .layer-indicator .li-molie .molie{width:34px;height:36px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));}
+  .layer-indicator .li-bubble{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#fff;color:var(--ink);font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.2);margin-bottom:2px;}
+  .layer-indicator .li-bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#fff;border-bottom:0;}
+  @keyframes molieBounce{0%,100%{transform:translate(-50%,-100%) translateY(0);}50%{transform:translate(-50%,-100%) translateY(-4px);}}
 
   /* CHALLENGE */
   .challenge-tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
@@ -350,13 +358,13 @@
   .float-star{position:fixed;font-size:1.9rem;z-index:100;pointer-events:none;animation:floatUp .9s cubic-bezier(.2,.8,.4,1) forwards;}
   @keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(.7);}100%{opacity:0;transform:translateY(-140px) scale(1.4);}}
 
-  #screen-reward{align-items:center;justify-content:center;text-align:center;gap:8px;}
-  .reward-title{font-size:2.2rem;font-weight:700;color:#fff;text-shadow:0 3px 0 #5B3A99,0 8px 18px rgba(0,0,0,.2);margin:0;}
-  .reward-stars{display:flex;gap:14px;margin:6px 0;justify-content:center;}
+  #screen-reward{align-items:center;justify-content:center;text-align:center;gap:8px;overflow-y:auto;}
+  .reward-title{font-size:clamp(1.6rem,6vw,2.2rem);font-weight:700;color:#fff;text-shadow:0 3px 0 #5B3A99,0 8px 18px rgba(0,0,0,.2);margin:0;word-wrap:break-word;}
+  .reward-stars{display:flex;gap:14px;margin:6px 0;justify-content:center;flex-wrap:wrap;}
   .rstar{font-size:3.4rem;filter:grayscale(1) brightness(1.6) opacity(.35);transform:scale(.6);transition:none;}
   .rstar.lit{animation:starPop .6s cubic-bezier(.2,1.7,.4,1) forwards;filter:none;}
   @keyframes starPop{0%{transform:scale(0) rotate(-90deg);}60%{transform:scale(1.35) rotate(10deg);}100%{transform:scale(1) rotate(0);}}
-  .reward-msg{font-size:1.15rem;font-weight:600;color:#3C2A12;margin:2px 0;}
+  .reward-msg{font-size:1.1rem;font-weight:600;color:#3C2A12;margin:2px 0;word-wrap:break-word;max-width:90%;line-height:1.5;}
   .badge-new{background:#fff;border-radius:18px;padding:10px 18px;font-weight:600;box-shadow:0 5px 0 #E4D5C0;animation:popIn .5s;}
   .reward-actions{display:flex;gap:14px;margin-top:12px;}
 
@@ -715,7 +723,27 @@ const state = {
 state.load();
 
 /* ============================================================
+   MODAL KONFIRMASI (pengganti confirm native)
+   ============================================================ */
+function showConfirm(msg, onYes){
+  const modal = document.createElement('div');
+  modal.className = 'modal-back';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:400px;text-align:center;">
+      <p style="font-size:1.05rem;font-weight:600;margin:0 0 16px;">${msg}</p>
+      <div class="row" style="justify-content:center;">
+        <button class="btn btn-ghost" id="mcNo">Batal</button>
+        <button class="btn btn-red" id="mcYes">Ya</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('mcNo').onclick = ()=>modal.remove();
+  document.getElementById('mcYes').onclick = ()=>{ modal.remove(); if(onYes) onYes(); };
+}
+
+/* ============================================================
    4. DATA LEVEL
+   ============================================================ */
    ============================================================ */
 const LAYER_COLORS = ['🟫','🟧','🟥','🟡'];
 
@@ -944,13 +972,13 @@ document.getElementById('setSound').addEventListener('click',()=>{ state.sound=!
 document.getElementById('setMusic').addEventListener('click',()=>{ state.music=!state.music; state.save(); syncToggleUI(); sfx.pop(); });
 document.getElementById('setVoice').addEventListener('click',()=>{ state.voice=!state.voice; state.save(); syncToggleUI(); sfx.pop(); });
 document.getElementById('btnReset').addEventListener('click',()=>{
-  if(confirm('Reset semua progres (bintang, lencana, dan jelajah poster)?')){
+  showConfirm('Reset semua progres (bintang, lencana, dan jelajah poster)?', ()=>{
     state.levelStars=[0,0,0,0];
     state.visitedPoster=[];
     state.save();
     renderMenuStars();
     go('menu');
-  }
+  });
 });
 syncToggleUI();
 
@@ -1200,9 +1228,7 @@ function updateGameStars(){
 }
 
 document.getElementById('btnBackGame').addEventListener('click',()=>{
-  if(confirm('Keluar dari kuis? Progres level ini tidak disimpan.')){
-    go('map');
-  }
+  showConfirm('Keluar dari kuis? Progres level ini tidak disimpan.', ()=>go('map'));
 });
 
 function renderQuestion(){
@@ -1220,7 +1246,10 @@ function renderQuestion(){
     li.innerHTML = `
       <div class="li-imgwrap">
         <img class="li-img" src="poster-bumi.png" alt="Lapisan ${layerIdx+1}">
-        <span class="li-dot" style="left:${hp.x}%;top:${hp.y}%;background:${layerColor};"></span>
+        <div class="li-molie" style="left:${hp.x}%;top:${hp.y}%;">
+          ${molieSVG(34)}
+          <span class="li-bubble">Kita ada di sini!</span>
+        </div>
       </div>
       <div class="li-text">
         <div class="li-name" style="color:${layerColor};">● Lapisan ${layerIdx+1}</div>
