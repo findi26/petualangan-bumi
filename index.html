@@ -824,7 +824,7 @@ function renderMenuStars(){
 document.getElementById('btnStart').addEventListener('click',()=>startPoster('menu'));
 document.getElementById('btnProfile').addEventListener('click',()=>go('profile'));
 document.getElementById('btnSettings').addEventListener('click',()=>go('settings'));
-document.getElementById('btnChallenge').addEventListener('click',()=>go('challenge'));
+document.getElementById('btnChallenge').addEventListener('click',()=>{ go('challenge'); setTimeout(renderChallenge, 100); });
 
 (function(){
   const bulan=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
