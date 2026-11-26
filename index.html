@@ -661,7 +661,7 @@ const sfx = {
   boing(){ tone(300,.18,'triangle',.16); tone(200,.2,'triangle',.12,.1); },
   twinkle(){ [1046,1318,1568,2093].forEach((f,i)=>tone(f,.16,'sine',.13,i*.06)); },
   whoosh(){ tone(500,.3,'sawtooth',.07); tone(180,.35,'sawtooth',.06,.08); },
-  win(){ [523,659,784,1046].forEach((f,i)=>tone(f,.22,'triangle',.15,i*.11)); }
+  win(){ [523,659,784,1046,784,1046,1318].forEach((f,i)=>tone(f,.3,'triangle',.14,i*.18)); }
 };
 
 let cachedVoices = [];
@@ -1375,7 +1375,7 @@ function showReward(){
 
   go('reward');
   setTimeout(()=>{ sfx.win(); confettiBurst(30); }, 200);
-  setTimeout(()=>{ speak(stars===3 ? 'Luar biasa!' : (stars===2 ? 'Hebat!' : 'Bagus!')); }, 400);
+  setTimeout(()=>{ speak(stars===3 ? 'Luar biasa! Kamu hebat sekali!' : (stars===2 ? 'Hebat! Kamu pintar!' : 'Bagus! Terus belajar ya!')); }, 1300);
 }
 
 /* ============================================================
