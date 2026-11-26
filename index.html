@@ -297,6 +297,10 @@
   .layer-indicator .li-text{flex:1;}
   .layer-indicator .li-name{font-weight:700;font-size:1rem;color:var(--purple);}
   .layer-indicator .li-sub{font-size:.8rem;opacity:.7;}
+  .layer-indicator .li-imgwrap{position:relative;display:inline-block;max-width:180px;width:100%;}
+  .layer-indicator .li-imgwrap .li-img{max-width:100%;}
+  .layer-indicator .li-dot{position:absolute;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px rgba(255,255,255,.6),0 2px 6px rgba(0,0,0,.4);transform:translate(-50%,-50%);pointer-events:none;z-index:2;animation:dotPulse 1.5s ease-in-out infinite;}
+  @keyframes dotPulse{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.25);}}
 
   /* CHALLENGE */
   .challenge-tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
@@ -1184,7 +1188,7 @@ let game = null;
 function startQuiz(i){
   const lv = LEVELS[i];
   game = { level:i, qi:0, mistakes:0, sessionStars:0, locked:false };
-  document.getElementById('gameTitle').textContent = `Level ${i+1} · ${lv.name}`;
+  document.getElementById('gameTitle').textContent = `${lv.name}`;
   updateGameStars();
   sfx.whoosh();
   go('game');
@@ -1208,12 +1212,16 @@ function renderQuestion(){
 
   const layerIdx = (typeof q.layer === 'number') ? q.layer : 0;
   const layerColor = LAYERS[layerIdx].color;
+  const hp = POSTER_CONFIG.hotspots.find(h=>h.layer===layerIdx) || { x:50, y:50 };
 
-  // Indikator lapisan saat ini (nomor saja, tanpa nama)
+  // Indikator lapisan saat ini (gambar bumi + titik penunjuk)
   const li = document.getElementById('layerIndicator');
   if(li){
     li.innerHTML = `
-      <img class="li-img" src="poster-bumi.png" alt="Lapisan ${layerIdx+1}">
+      <div class="li-imgwrap">
+        <img class="li-img" src="poster-bumi.png" alt="Lapisan ${layerIdx+1}">
+        <span class="li-dot" style="left:${hp.x}%;top:${hp.y}%;background:${layerColor};"></span>
+      </div>
       <div class="li-text">
         <div class="li-name" style="color:${layerColor};">● Lapisan ${layerIdx+1}</div>
         <div class="li-sub">Level ${game.level+1} dari 4</div>
@@ -1338,8 +1346,8 @@ function showReward(){
   document.getElementById('btnRetry').onclick=()=>startQuiz(game.level);
 
   go('reward');
-  sfx.win();
-  confettiBurst(30);
+  setTimeout(()=>{ sfx.win(); confettiBurst(30); }, 200);
+  setTimeout(()=>{ speak(stars===3 ? 'Luar biasa!' : (stars===2 ? 'Hebat!' : 'Bagus!')); }, 400);
 }
 
 /* ============================================================
