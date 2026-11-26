@@ -723,7 +723,7 @@ const LAYER_SVG = {
   '🟡': '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="g4" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF3B0"/><stop offset="50%" stop-color="#FFD93D"/><stop offset="100%" stop-color="#E8B21E"/></radialGradient></defs><rect width="80" height="80" rx="12" fill="#FF4E3A"/><circle cx="40" cy="40" r="26" fill="url(#g4)"/><circle cx="40" cy="40" r="26" fill="none" stroke="#FF8C42" stroke-width="3"/><circle cx="32" cy="32" r="3" fill="#FFF" opacity=".6"/><circle cx="50" cy="46" r="2" fill="#FFF" opacity=".5"/><path d="M40 14 L40 8" stroke="#FF4E3A" stroke-width="2"/><circle cx="40" cy="6" r="3" fill="#FF4E3A"/></svg>'
 };
 
-const LEVELS = [
+const LAYERS = [
   {
     id:0, name:'Kerak Bumi', sub:'Rumah si Cacing', color:'#C68642', color2:'#E0A15F',
     emoji:'🪱', badge:'Penjelajah Pemula',
@@ -807,6 +807,85 @@ const LEVELS = [
       { q:'Bumi tersusun dari berapa lapisan utama?',
         opts:[{e:'🟡',t:'4 lapisan'},{e:'🟥',t:'2 lapisan'},{e:'🟧',t:'3 lapisan'},{e:'🟫',t:'5 lapisan'}], a:0 },
       { q:'Urutan lapisan bumi dari luar ke dalam adalah…',
+        opts:[{e:'🟡',t:'Kerak → Mantel → Inti Luar → Inti Dalam'},
+              {e:'🟥',t:'Mantel → Kerak → Inti Dalam → Inti Luar'},
+              {e:'🟧',t:'Inti Dalam → Inti Luar → Mantel → Kerak'},
+              {e:'🟫',t:'Kerak → Inti Luar → Mantel → Inti Dalam'}], a:0 }
+    ]
+  }
+];
+
+/* ============================================================
+   4b. LEVELS (berbasis kesulitan/bobot, mencakup 4 lapisan)
+   ============================================================ */
+const LEVELS = [
+  {
+    id:0, name:'Level 1: Mudah', sub:'Pengenalan Lapisan', color:'#9B5DE5', color2:'#B388EB',
+    emoji:'🌍', badge:'Penjelajah Pemula',
+    questions:[
+      { layer:0, q:'Lapisan paling luar bumi, tempat kita tinggal, disebut…',
+        opts:[{e:'🟫',t:'Kerak Bumi'},{e:'🟧',t:'Mantel'},{e:'🟥',t:'Inti Luar'},{e:'🟡',t:'Inti Dalam'}], a:0 },
+      { layer:0, q:'Kerak bumi dibagi menjadi dua jenis. Yang membentuk daratan adalah…',
+        opts:[{e:'🟫',t:'Kerak Benua'},{e:'🟧',t:'Kerak Samudra'}], a:0 },
+      { layer:1, q:'Lapisan yang ada tepat di bawah kerak bumi disebut…',
+        opts:[{e:'🟧',t:'Mantel'},{e:'🟥',t:'Inti Luar'},{e:'🟡',t:'Inti Dalam'}], a:0 },
+      { layer:2, q:'Inti luar bumi berwujud…',
+        opts:[{e:'🟥',t:'Cair'},{e:'🟡',t:'Padat'},{e:'🟧',t:'Gas'}], a:0 },
+      { layer:3, q:'Lapisan paling dalam bumi adalah…',
+        opts:[{e:'🟡',t:'Inti Dalam'},{e:'🟥',t:'Inti Luar'},{e:'🟧',t:'Mantel'}], a:0 }
+    ]
+  },
+  {
+    id:1, name:'Level 2: Sedang', sub:'Memahami Lapisan', color:'#FF8C42', color2:'#FFAE73',
+    emoji:'🌍', badge:'Sahabat Magma',
+    questions:[
+      { layer:0, q:'Ketebalan kerak benua sekitar…',
+        opts:[{e:'🟫',t:'10 – 20 km'},{e:'🟧',t:'30 – 70 km'},{e:'🟥',t:'100 – 200 km'},{e:'🟡',t:'500 km'}], a:1 },
+      { layer:0, q:'Kerak benua tersusun dari batuan…',
+        opts:[{e:'🟫',t:'Granit'},{e:'🟧',t:'Magma'},{e:'🟥',t:'Logam cair'},{e:'🟡',t:'Es'}], a:0 },
+      { layer:1, q:'Ketebalan mantel bumi sekitar…',
+        opts:[{e:'🟧',t:'100 km'},{e:'🟥',t:'1.000 km'},{e:'🟡',t:'2.900 km'},{e:'🟫',t:'5.000 km'}], a:2 },
+      { layer:1, q:'Suhu di mantel bumi bisa mencapai…',
+        opts:[{e:'🟧',t:'1.000°C'},{e:'🟥',t:'4.000°C'},{e:'🟡',t:'6.000°C'},{e:'🟫',t:'10.000°C'}], a:1 },
+      { layer:2, q:'Inti luar tersusun terutama dari…',
+        opts:[{e:'🟥',t:'Besi dan nikel'},{e:'🟫',t:'Granit'},{e:'🟡',t:'Pasir'},{e:'🟧',t:'Air'}], a:0 },
+      { layer:3, q:'Suhu inti dalam sekitar…',
+        opts:[{e:'🟡',t:'5.000 – 6.000°C'},{e:'🟥',t:'1.000°C'},{e:'🟧',t:'3.000°C'},{e:'🟫',t:'10.000°C'}], a:0 }
+    ]
+  },
+  {
+    id:2, name:'Level 3: Sulit', sub:'Menguasai Lapisan', color:'#FF4E3A', color2:'#FF7F70',
+    emoji:'🌍', badge:'Ahli Magnet',
+    questions:[
+      { layer:1, q:'Apa yang menyebabkan lempeng tektonik bergerak?',
+        opts:[{e:'🟧',t:'Arus konveksi'},{e:'🟥',t:'Angin'},{e:'🟡',t:'Hujan'},{e:'🟫',t:'Gravitasi'}], a:0 },
+      { layer:1, q:'Mantel bumi tersusun dari batuan kaya…',
+        opts:[{e:'🟧',t:'Magnesium dan besi'},{e:'🟥',t:'Granit'},{e:'🟡',t:'Es'},{e:'🟫',t:'Pasir'}], a:0 },
+      { layer:2, q:'Medan magnet bumi terbentuk karena…',
+        opts:[{e:'🟥',t:'Pergerakan logam cair di inti luar'},{e:'🟫',t:'Angin di permukaan'},{e:'🟡',t:'Hujan'},{e:'🟧',t:'Rotasi bumi saja'}], a:0 },
+      { layer:2, q:'Medan magnet bumi berfungsi untuk…',
+        opts:[{e:'🟥',t:'Melindungi dari partikel Matahari'},{e:'🟫',t:'Membuat cuaca'},{e:'🟡',t:'Menumbuhkan tanaman'},{e:'🟧',t:'Mengatur pasang surut'}], a:0 },
+      { layer:3, q:'Mengapa inti dalam tetap padat meskipun sangat panas?',
+        opts:[{e:'🟡',t:'Karena tekanan sangat besar'},{e:'🟥',t:'Karena suhu rendah'},{e:'🟧',t:'Karena terbuat dari es'},{e:'🟫',t:'Karena dingin'}], a:0 },
+      { layer:3, q:'Inti dalam tersusun terutama dari…',
+        opts:[{e:'🟡',t:'Besi dan nikel'},{e:'🟥',t:'Granit'},{e:'🟧',t:'Pasir'},{e:'🟫',t:'Air'}], a:0 }
+    ]
+  },
+  {
+    id:3, name:'Level 4: Ahli', sub:'Master Bumi', color:'#E8B21E', color2:'#FFD93D',
+    emoji:'🌍', badge:'Master Bumi',
+    questions:[
+      { layer:0, q:'Kerak samudra berada di bawah…',
+        opts:[{e:'🟫',t:'Lautan dan samudra'},{e:'🟧',t:'Pegunungan'},{e:'🟥',t:'Dataran tinggi'},{e:'🟡',t:'Hutan'}], a:0 },
+      { layer:1, q:'Mantel adalah lapisan paling…',
+        opts:[{e:'🟧',t:'Tebal'},{e:'🟥',t:'Tipis'},{e:'🟡',t:'Dalam'},{e:'🟫',t:'Dingin'}], a:0 },
+      { layer:2, q:'Inti luar berwujud…',
+        opts:[{e:'🟥',t:'Cair'},{e:'🟡',t:'Padat'},{e:'🟧',t:'Gas'},{e:'🟫',t:'Plasma'}], a:0 },
+      { layer:3, q:'Inti dalam berwujud…',
+        opts:[{e:'🟡',t:'Padat'},{e:'🟥',t:'Cair'},{e:'🟧',t:'Gas'},{e:'🟫',t:'Plasma'}], a:0 },
+      { layer:0, q:'Bumi tersusun dari berapa lapisan utama?',
+        opts:[{e:'🟡',t:'4 lapisan'},{e:'🟥',t:'2 lapisan'},{e:'🟧',t:'3 lapisan'},{e:'🟫',t:'5 lapisan'}], a:0 },
+      { layer:0, q:'Urutan lapisan bumi dari luar ke dalam adalah…',
         opts:[{e:'🟡',t:'Kerak → Mantel → Inti Luar → Inti Dalam'},
               {e:'🟥',t:'Mantel → Kerak → Inti Dalam → Inti Luar'},
               {e:'🟧',t:'Inti Dalam → Inti Luar → Mantel → Kerak'},
@@ -975,7 +1054,7 @@ function renderHotspots(){
     btn.style.setProperty('--hs-color', h.color || 'var(--gold)');
     btn.dataset.layer = h.layer;
     btn.dataset.side = h.side || 'right';
-    btn.setAttribute('aria-label', LEVELS[h.layer].theory.title);
+    btn.setAttribute('aria-label', LAYERS[h.layer].theory.title);
     
     // Struktur: dot + garis penghubung + label (keterangan)
     btn.innerHTML = `
@@ -1009,7 +1088,7 @@ function onHotspotClick(layerIdx, btn){
 }
 
 function showLayerInfo(layerIdx){
-  const lv = LEVELS[layerIdx];
+  const lv = LAYERS[layerIdx];
   document.getElementById('piEmoji').textContent = LAYER_COLORS[layerIdx];
   document.getElementById('piTitle').textContent = lv.theory.title;
   document.getElementById('piDesc').textContent = lv.theory.desc;
@@ -1127,13 +1206,16 @@ function renderQuestion(){
   const q=lv.questions[game.qi];
   game.locked=false;
 
-  // Indikator lapisan saat ini
+  const layerIdx = (typeof q.layer === 'number') ? q.layer : 0;
+  const layerColor = LAYERS[layerIdx].color;
+
+  // Indikator lapisan saat ini (nomor saja, tanpa nama)
   const li = document.getElementById('layerIndicator');
   if(li){
     li.innerHTML = `
-      <img class="li-img" src="poster-bumi.png" alt="Lapisan ${game.level+1}">
+      <img class="li-img" src="poster-bumi.png" alt="Lapisan ${layerIdx+1}">
       <div class="li-text">
-        <div class="li-name" style="color:${lv.color};">● Lapisan ${game.level+1}</div>
+        <div class="li-name" style="color:${layerColor};">● Lapisan ${layerIdx+1}</div>
         <div class="li-sub">Level ${game.level+1} dari 4</div>
       </div>
     `;
