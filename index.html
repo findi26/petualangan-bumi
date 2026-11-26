@@ -558,9 +558,9 @@
       <div style="width:48px"></div>
     </header>
     <div class="challenge-tabs">
-      <button class="tab active" data-ctab="urut">🔢 Mengurutkan</button>
-      <button class="tab" data-ctab="cocok">🔗 Mencocokkan</button>
-      <button class="tab" data-ctab="drag">🎯 Drag & Drop</button>
+      <button class="tab active" data-ctab="urut">Mengurutkan</button>
+      <button class="tab" data-ctab="cocok">Mencocokkan</button>
+      <button class="tab" data-ctab="drag">Drag & Drop</button>
     </div>
     <div id="challengeContent" style="flex:1;overflow-y:auto;"></div>
   </section>
@@ -1328,7 +1328,7 @@ function renderChUrut(c){
   chState.urut = { selected: null, placed: [null,null,null,null], pool: shuffled };
   c.innerHTML = `
     <div class="ch-card">
-      <h3 class="ch-title">🔢 Urutkan Lapisan Bumi</h3>
+      <h3 class="ch-title">Urutkan Lapisan Bumi</h3>
       <p class="ch-desc">Susun lapisan bumi dari paling luar ke paling dalam. Ketuk item, lalu ketuk slot.</p>
       <div id="urutSlots"></div>
       <div id="urutPool" style="margin-top:10px;"></div>
@@ -1369,7 +1369,7 @@ function checkUrut(){
   const correct = ['Kerak Bumi','Mantel','Inti Luar','Inti Dalam'];
   const ok = st.placed.every((v,i)=>v===correct[i]);
   const res = document.getElementById('urutResult');
-  res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? '✅ Benar! Urutan sudah tepat.' : '❌ Belum tepat. Coba lagi!'}</div>`;
+  res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? 'Benar! Urutan sudah tepat.' : 'Belum tepat. Coba lagi!'}</div>`;
 }
 
 /* --- Mencocokkan --- */
@@ -1385,7 +1385,7 @@ function renderChCocok(c){
   chState.cocok = { selectedLayer: null, selectedDesc: null, matches: {}, layers, descs, pairs };
   c.innerHTML = `
     <div class="ch-card">
-      <h3 class="ch-title">🔗 Cocokkan Lapisan dengan Ciri-cirinya</h3>
+      <h3 class="ch-title">Cocokkan Lapisan dengan Ciri-cirinya</h3>
       <p class="ch-desc">Ketuk lapisan, lalu ketuk ciri yang sesuai.</p>
       <div class="grid2">
         <div>
@@ -1448,7 +1448,7 @@ function checkCocok(){
   });
   if(Object.keys(st.matches).length !== st.descs.length) ok = false;
   const res = document.getElementById('cocokResult');
-  res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? '✅ Benar! Semua cocok.' : '❌ Ada yang belum cocok. Coba lagi!'}</div>`;
+  res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? 'Benar! Semua cocok.' : 'Ada yang belum cocok. Coba lagi!'}</div>`;
 }
 
 /* --- Drag & Drop (tap to place) --- */
@@ -1463,7 +1463,7 @@ function renderChDrag(c){
   chState.drag = { selected: null, placed: {}, zones, items };
   c.innerHTML = `
     <div class="ch-card">
-      <h3 class="ch-title">🎯 Seret (Tap) ke Tempat yang Tepat</h3>
+      <h3 class="ch-title">Seret (Tap) ke Tempat yang Tepat</h3>
       <p class="ch-desc">Ketuk item, lalu ketuk zona yang sesuai.</p>
       <div id="dragZones"></div>
       <div id="dragItems" style="margin-top:10px;"></div>
@@ -1509,7 +1509,7 @@ function checkDrag(){
   });
   if(Object.keys(st.placed).length !== st.zones.length) ok = false;
   const res = document.getElementById('dragResult');
-  res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? '✅ Benar! Semua tepat.' : '❌ Ada yang belum tepat. Coba lagi!'}</div>`;
+  res.innerHTML = `<div class="ch-result ${ok?'ok':'fail'}">${ok ? 'Benar! Semua tepat.' : 'Ada yang belum tepat. Coba lagi!'}</div>`;
 }
 
 /* Hook go() to render challenge screen */
