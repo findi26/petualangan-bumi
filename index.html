@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Ke Bawah Tanah Bumi 🌍</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#87CEEB; --grass:#7BC96F; --crust:#C68642; --mantle:#FF8C42;
+    --outer:#FF4E3A; --inner:#FFD93D; --purple:#9B5DE5; --purple-dark:#7A3FC4;
+    --gold:#FFCC00; --ink:#4A2C00; --cream:#FFF8ED;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:'Fredoka','Baloo 2',system-ui,'Segoe UI',sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,#B8E6FF 0%, #87CEEB 45%, #9BE0A8 100%);
+    overflow:hidden;
+  }
+
+  .sky{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none;}
+  .cloud{position:absolute;background:#fff;border-radius:100px;opacity:.85;box-shadow:0 8px 0 rgba(255,255,255,.35);animation:drift linear infinite;}
+  .cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%;}
+  .cloud::before{width:60%;height:150%;left:10%;top:-70%;}
+  .cloud::after{width:45%;height:130%;right:8%;top:-55%;}
+  .c1{width:130px;height:38px;top:8%;left:-160px;animation-duration:38s;}
+  .c2{width:90px;height:28px;top:22%;left:-140px;animation-duration:52s;animation-delay:6s;opacity:.6;}
+  .c3{width:160px;height:44px;top:40%;left:-200px;animation-duration:64s;animation-delay:14s;opacity:.5;}
+  @keyframes drift{to{transform:translateX(calc(100vw + 240px));}}
+
+  .app{position:relative;z-index:1;height:100dvh;width:100%;max-width:920px;margin:0 auto;}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column;padding:14px 18px 20px;overflow-y:auto;overflow-x:hidden;}
+  .screen.active{display:flex;animation:screenIn .45s cubic-bezier(.2,1.2,.4,1);}
+  @keyframes screenIn{from{opacity:0;transform:translateY(18px) scale(.98);}to{opacity:1;transform:none;}}
+
+  .btn{font-family:inherit;font-weight:600;font-size:1.15rem;border:none;cursor:pointer;border-radius:22px;padding:16px 26px;transition:transform .12s, box-shadow .12s;color:#fff;background:var(--purple);box-shadow:0 6px 0 var(--purple-dark), 0 10px 18px rgba(0,0,0,.15);}
+  .btn:active{transform:translateY(5px);box-shadow:0 1px 0 var(--purple-dark);}
+  .btn-primary{background:var(--purple);}
+  .btn-big{font-size:1.5rem;padding:20px 44px;border-radius:28px;letter-spacing:.5px;}
+  .btn-ghost{background:#fff;color:var(--ink);font-size:1rem;padding:13px 20px;box-shadow:0 5px 0 #D9C8B0, 0 8px 14px rgba(0,0,0,.1);}
+  .btn-ghost:active{box-shadow:0 1px 0 #D9C8B0;}
+  .btn-green{background:#4CC38A;box-shadow:0 6px 0 #339E6C,0 10px 18px rgba(0,0,0,.15);}
+  .btn-green:active{box-shadow:0 1px 0 #339E6C;}
+  .btn:disabled{opacity:.55;cursor:not-allowed;background:#B0A0D0;box-shadow:0 6px 0 #7A6AA0;transform:none;}
+  .icon-btn{width:48px;height:48px;border-radius:16px;border:none;background:#fff;cursor:pointer;font-size:1.3rem;display:grid;place-items:center;box-shadow:0 4px 0 #D9C8B0;transition:transform .1s;}
+  .icon-btn:active{transform:translateY(4px);box-shadow:none;}
+  .icon-btn.off{opacity:.4;}
+  .chip{background:#fff;border-radius:999px;padding:10px 18px;font-weight:600;font-size:1.05rem;box-shadow:0 4px 0 #D9C8B0;display:flex;align-items:center;gap:6px;}
+
+  /* MENU */
+  #screen-menu{justify-content:space-between;align-items:center;text-align:center;}
+  .menu-top{display:flex;gap:10px;width:100%;align-items:center;}
+  .menu-top .spacer{flex:1;}
+  .menu-hero{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:4px;}
+  .game-title{font-size:clamp(1.9rem,6vw,2.8rem);line-height:1.05;margin:6px 0 0;font-weight:700;color:#fff;text-shadow:0 3px 0 #5B3A99, 0 8px 18px rgba(0,0,0,.2);}
+  .game-title span{font-size:.72em;color:#FFE066;text-shadow:0 3px 0 #A26B00,0 8px 16px rgba(0,0,0,.2);}
+  .tagline{margin:10px 0 0;font-size:1.02rem;color:#3C2A12;font-weight:500;max-width:420px;}
+  .menu-actions{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;}
+  .menu-actions .row{display:flex;gap:12px;}
+  .date-line{font-size:.9rem;color:#3C2A12;opacity:.75;font-weight:500;margin-top:6px;}
+
+  /* MOLIE */
+  .molie-wrap{display:inline-block;animation:bob 2.8s ease-in-out infinite;filter:drop-shadow(0 12px 14px rgba(0,0,0,.18));}
+  .molie{display:block;}
+  .molie.jump{animation:jump .55s cubic-bezier(.3,1.6,.5,1);}
+  .molie.headshake{animation:headshake .5s ease;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-10px) rotate(1deg);}}
+  @keyframes jump{0%{transform:translateY(0) scale(1);}35%{transform:translateY(-34px) scale(1.06,.94);}70%{transform:translateY(0) scale(.94,1.06);}100%{transform:translateY(0) scale(1);}}
+  @keyframes headshake{0%,100%{transform:rotate(0);}20%{transform:rotate(-8deg);}40%{transform:rotate(8deg);}60%{transform:rotate(-5deg);}80%{transform:rotate(5deg);}}
+
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex:0 0 auto;}
+  .topbar h2{margin:0;font-size:1.15rem;flex:1;text-align:center;color:#3C2A12;}
+  .topbar .chip{font-size:.95rem;padding:8px 14px;}
+
+  /* MAP */
+  .map-list{display:flex;flex-direction:column;gap:14px;padding-bottom:30px;}
+  .level-card{position:relative;display:flex;align-items:center;gap:16px;border-radius:24px;padding:18px 20px;cursor:pointer;border:none;font-family:inherit;text-align:left;color:#fff;box-shadow:0 8px 0 rgba(0,0,0,.18), 0 14px 22px rgba(0,0,0,.14);transition:transform .15s;animation:cardIn .5s backwards cubic-bezier(.2,1.3,.4,1);}
+  .level-card:active:not(.locked){transform:translateY(6px);box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .level-card.locked{filter:grayscale(.75) brightness(.85);cursor:not-allowed;}
+  .level-card .emoji-badge{width:60px;height:60px;flex:0 0 60px;border-radius:20px;display:grid;place-items:center;font-size:2rem;background:rgba(255,255,255,.35);backdrop-filter:blur(4px);}
+  .level-card .lc-text{flex:1;min-width:0;}
+  .level-card .lc-num{font-size:.82rem;font-weight:600;opacity:.85;letter-spacing:1px;}
+  .level-card .lc-name{font-size:1.3rem;font-weight:700;margin:1px 0 2px;text-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .level-card .lc-sub{font-size:.9rem;font-weight:500;opacity:.95;}
+  .level-card .lc-stars{font-size:1.15rem;letter-spacing:2px;margin-top:6px;filter:drop-shadow(0 2px 0 rgba(0,0,0,.2));}
+  .level-card .lock-ico{font-size:1.6rem;opacity:.9;}
+  @keyframes cardIn{from{opacity:0;transform:translateX(-30px);}}
+
+  .map-review-btn{text-align:center;margin-bottom:10px;}
+
+  /* POSTER */
+  #screen-poster{padding-bottom:16px;}
+  .poster-scroll{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:12px;align-items:center;min-height:0;padding-bottom:6px;}
+
+  .poster-depthbar{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;flex:0 0 auto;}
+  .depth-pill{font-size:.7rem;font-weight:700;padding:5px 10px;border-radius:999px;background:#fff;opacity:.5;letter-spacing:.4px;transition:.25s;box-shadow:0 3px 0 #D9C8B0;color:#7A5A30;}
+  .depth-pill.on{opacity:1;background:var(--purple);color:#fff;transform:translateY(-2px);}
+  .depth-pill.done{opacity:1;background:#C8F5D8;color:#2D7B4F;}
+  .depth-pill.done::before{content:'✓ ';font-weight:800;}
+
+  .poster-frame{width:100%;display:flex;justify-content:center;padding:4px 0;}
+  .poster-wrap{position:relative;display:inline-block;max-width:100%;}
+  #posterImg{display:none;max-width:100%;max-height:min(48vh,420px);border-radius:20px;box-shadow:0 8px 0 #D9C8B0, 0 14px 22px rgba(0,0,0,.14);}
+  #posterFallback{display:block;max-width:100%;max-height:min(48vh,420px);}
+  #posterFallback svg{display:block;width:100%;height:auto;max-height:min(48vh,420px);border-radius:20px;box-shadow:0 8px 0 #D9C8B0, 0 14px 22px rgba(0,0,0,.14);}
+
+  .hotspot{position:absolute;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;border:3px solid #fff;background:var(--gold);color:#4A2C00;cursor:pointer;font-family:inherit;font-weight:800;font-size:1rem;display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.35);z-index:3;transition:transform .15s, background .25s;}
+  .hotspot::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:3px solid var(--gold);opacity:.6;animation:hotspotRing 1.8s ease-out infinite;}
+  @keyframes hotspotRing{0%{transform:scale(1);opacity:.7;}100%{transform:scale(1.9);opacity:0;}}
+  .hotspot:hover{transform:translate(-50%,-50%) scale(1.12);}
+  .hotspot.visited{background:#4CC38A;color:#fff;border-color:#fff;}
+  .hotspot.visited::before{display:none;}
+  .hotspot.visited::after{content:'✓';position:absolute;font-size:1.1rem;font-weight:900;}
+  .hotspot.visited .hs-num{display:none;}
+
+  .poster-hint{font-size:.82rem;font-weight:600;color:#7A5A30;text-align:center;background:rgba(255,255,255,.85);padding:7px 14px;border-radius:999px;box-shadow:0 3px 0 rgba(217,200,176,.6);}
+
+  .poster-progress{display:flex;align-items:center;gap:10px;width:100%;max-width:420px;font-size:.82rem;font-weight:700;color:#3C2A12;}
+  .pp-bar{flex:1;height:10px;background:#E4D5C0;border-radius:999px;overflow:hidden;box-shadow:inset 0 2px 3px rgba(0,0,0,.1);}
+  .pp-fill{height:100%;background:linear-gradient(90deg,#4CC38A,var(--gold));width:0%;transition:width .5s cubic-bezier(.4,1.3,.5,1);border-radius:999px;}
+
+  .poster-info-wrap{display:flex;gap:10px;width:100%;max-width:500px;align-items:flex-start;padding:0 4px;}
+  .poster-info-wrap .molie-wrap{flex:0 0 auto;}
+  .poster-info{flex:1;background:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 6px 0 #E4D5C0, 0 10px 16px rgba(0,0,0,.08);min-height:120px;position:relative;animation:popIn .35s cubic-bezier(.2,1.4,.4,1);}
+  .poster-info::before{content:'';position:absolute;left:-8px;top:20px;width:0;height:0;border:10px solid transparent;border-right-color:#fff;border-left:0;}
+  @keyframes popIn{from{opacity:0;transform:scale(.9);}}
+  .pi-header{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .pi-emoji{font-size:1.6rem;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15));}
+  .poster-info h3{margin:0;font-size:1.15rem;color:var(--purple);}
+  .poster-info p{margin:0;font-size:.95rem;line-height:1.45;font-weight:500;}
+  .fact-card{display:flex;gap:10px;margin-top:10px;padding:10px 12px;background:#FFF4D6;border-radius:14px;border-left:4px solid var(--gold);align-items:flex-start;}
+  .fact-card .fact-icon{font-size:1.15rem;line-height:1;flex:0 0 auto;}
+  .fact-card p{margin:0;font-size:.88rem;font-weight:500;line-height:1.4;}
+  .fact-card strong{color:#A26B00;}
+
+  .poster-actions{margin-top:10px;display:flex;gap:12px;flex:0 0 auto;}
+  .poster-actions .btn{width:100%;}
+
+  /* GAME */
+  .game-body{flex:1;display:flex;flex-direction:column;gap:14px;min-height:0;}
+  .progress{display:flex;gap:8px;justify-content:center;flex:0 0 auto;}
+  .dot{width:12px;height:12px;border-radius:50%;background:#fff;opacity:.45;transition:.3s;}
+  .dot.on{background:var(--gold);opacity:1;transform:scale(1.25);box-shadow:0 0 0 3px rgba(255,204,0,.35);}
+
+  .speech-row{display:flex;gap:12px;align-items:flex-start;flex:0 0 auto;}
+  .speech-row .molie-wrap{flex:0 0 auto;}
+  .bubble{position:relative;background:#fff;border-radius:22px;padding:16px 18px;font-size:1.08rem;font-weight:500;line-height:1.4;flex:1;box-shadow:0 6px 0 #E4D5C0, 0 10px 18px rgba(0,0,0,.08);animation:popIn .35s cubic-bezier(.2,1.5,.4,1);}
+  .bubble::before{content:'';position:absolute;left:-10px;top:24px;width:0;height:0;border:11px solid transparent;border-right-color:#fff;border-left:0;}
+
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:0;}
+  .option{font-family:inherit;cursor:pointer;border:4px solid #fff;border-radius:24px;background:#fff;padding:12px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;font-weight:600;font-size:1rem;color:var(--ink);box-shadow:0 7px 0 #E4D5C0, 0 12px 18px rgba(0,0,0,.1);transition:transform .12s, box-shadow .12s, background .2s, border-color .2s;animation:optIn .35s backwards cubic-bezier(.2,1.4,.4,1);}
+  .option .opt-emoji{font-size:2.1rem;line-height:1;}
+  .option:active:not(:disabled){transform:translateY(5px);box-shadow:0 2px 0 #E4D5C0;}
+  .option.correct{background:#C8F5D8;border-color:#4CC38A;animation:pulseGood .5s;}
+  .option.wrong{background:#FFD9D6;border-color:#FF6B5E;animation:shake .4s;}
+  .option:disabled{cursor:default;}
+  @keyframes optIn{from{opacity:0;transform:translateY(16px) scale(.9);}}
+  @keyframes pulseGood{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-9px);}50%{transform:translateX(9px);}75%{transform:translateX(-5px);}}
+
+  .confetti-layer{position:fixed;inset:0;pointer-events:none;z-index:99;overflow:hidden;}
+  .confetti{position:absolute;font-size:1.6rem;animation:fall linear forwards;}
+  @keyframes fall{0%{transform:translateY(-40px) rotate(0) scale(.6);opacity:1;}100%{transform:translateY(105vh) rotate(540deg) scale(1.1);opacity:0;}}
+  .float-star{position:fixed;font-size:1.9rem;z-index:100;pointer-events:none;animation:floatUp .9s cubic-bezier(.2,.8,.4,1) forwards;}
+  @keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(.7);}100%{opacity:0;transform:translateY(-140px) scale(1.4);}}
+
+  #screen-reward{align-items:center;justify-content:center;text-align:center;gap:8px;}
+  .reward-title{font-size:2.2rem;font-weight:700;color:#fff;text-shadow:0 3px 0 #5B3A99,0 8px 18px rgba(0,0,0,.2);margin:0;}
+  .reward-stars{display:flex;gap:14px;margin:6px 0;justify-content:center;}
+  .rstar{font-size:3.4rem;filter:grayscale(1) brightness(1.6) opacity(.35);transform:scale(.6);transition:none;}
+  .rstar.lit{animation:starPop .6s cubic-bezier(.2,1.7,.4,1) forwards;filter:none;}
+  @keyframes starPop{0%{transform:scale(0) rotate(-90deg);}60%{transform:scale(1.35) rotate(10deg);}100%{transform:scale(1) rotate(0);}}
+  .reward-msg{font-size:1.15rem;font-weight:600;color:#3C2A12;margin:2px 0;}
+  .badge-new{background:#fff;border-radius:18px;padding:10px 18px;font-weight:600;box-shadow:0 5px 0 #E4D5C0;animation:popIn .5s;}
+  .reward-actions{display:flex;gap:14px;margin-top:12px;}
+
+  .panel{background:#fff;border-radius:24px;padding:18px;box-shadow:0 7px 0 #E4D5C0,0 12px 20px rgba(0,0,0,.08);margin-bottom:14px;}
+  .stat-row{display:flex;gap:12px;margin-bottom:14px;}
+  .stat{flex:1;background:#fff;border-radius:20px;padding:16px;text-align:center;box-shadow:0 6px 0 #E4D5C0;}
+  .stat .num{font-size:1.9rem;font-weight:700;color:var(--purple);}
+  .stat .lbl{font-size:.85rem;font-weight:600;opacity:.7;}
+  .badge-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .badge{background:#FFF4D6;border-radius:18px;padding:14px;text-align:center;font-weight:600;font-size:.9rem;}
+  .badge .b-ico{font-size:2rem;display:block;margin-bottom:4px;}
+  .badge.locked{filter:grayscale(1);opacity:.45;}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;font-weight:600;border-bottom:1px solid #F0E5D5;}
+  .toggle-row:last-child{border-bottom:none;}
+  .switch{width:60px;height:34px;border-radius:999px;background:#D9C8B0;position:relative;cursor:pointer;transition:.25s;border:none;flex:0 0 auto;}
+  .switch::after{content:'';position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.25s;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .switch.on{background:#4CC38A;}
+  .switch.on::after{transform:translateX(26px);}
+</style>
+</head>
+<body>
+
+<div class="sky">
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+</div>
+<div class="confetti-layer" id="confettiLayer"></div>
+
+<div class="app">
+
+  <!-- MENU -->
+  <section class="screen active" id="screen-menu">
+    <div class="menu-top">
+      <div class="chip" id="menuStars">⭐ <span>0</span></div>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="btnSound">🔊</button>
+      <button class="icon-btn" id="btnMusic">🎵</button>
+    </div>
+    <div class="menu-hero">
+      <div class="molie-wrap" data-molie="190"></div>
+      <h1 class="game-title">Petualangan<br><span>Ke Bawah Tanah Bumi</span></h1>
+      <p class="tagline">Ayo jelajahi 4 lapisan bumi bersama Molie si tikus tanah!</p>
+    </div>
+    <div class="menu-actions">
+      <button class="btn btn-primary btn-big" id="btnStart">▶ MULAI</button>
+      <div class="row">
+        <button class="btn btn-ghost" id="btnProfile">🏅 Profil</button>
+        <button class="btn btn-ghost" id="btnSettings">⚙️ Atur</button>
+      </div>
+      <div class="date-line">📅 <span id="todayDate"></span></div>
+    </div>
+  </section>
+
+  <!-- POSTER TEORI -->
+  <section class="screen" id="screen-poster">
+    <header class="topbar">
+      <button class="icon-btn" id="btnPosterBack">←</button>
+      <h2 id="posterTitle">Kenali Lapisan Bumi</h2>
+      <div class="chip" id="posterChip">⭐ <span>0</span></div>
+    </header>
+
+    <div class="poster-depthbar" id="posterDepthbar"></div>
+
+    <div class="poster-scroll">
+      <div class="poster-frame">
+        <div class="poster-wrap" id="posterWrap">
+          <img id="posterImg" alt="Poster Lapisan Bumi" width="320" height="400">
+          <div id="posterFallback"></div>
+        </div>
+      </div>
+
+      <div class="poster-hint">👆 Ketuk titik bernomor di poster untuk belajar!</div>
+
+      <div class="poster-progress">
+        <div class="pp-bar"><div class="pp-fill" id="ppFill"></div></div>
+        <span id="ppText">0 / 4</span>
+      </div>
+
+      <div class="poster-info-wrap">
+        <div class="molie-wrap" data-molie="85"></div>
+        <div class="poster-info" id="posterInfo">
+          <div class="pi-header">
+            <span class="pi-emoji" id="piEmoji">🌍</span>
+            <h3 id="piTitle">Ayo Jelajahi!</h3>
+          </div>
+          <p id="piDesc">Ketuk titik berwarna di poster untuk mempelajari setiap lapisan bumi.</p>
+          <div class="fact-card" id="piFactCard" style="display:none;">
+            <span class="fact-icon">💡</span>
+            <p><strong>Tahukah kamu?</strong> <span id="piFact"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="poster-actions">
+      <button class="btn btn-primary" id="btnStartFromPoster" disabled>
+        Jelajahi dulu (0/4)
+      </button>
+    </div>
+  </section>
+
+  <!-- MAP -->
+  <section class="screen" id="screen-map">
+    <header class="topbar">
+      <button class="icon-btn" data-nav="menu">←</button>
+      <h2>Peta Lapisan Bumi</h2>
+      <div class="chip" id="mapStars">⭐ <span>0</span></div>
+    </header>
+    <div class="map-review-btn">
+      <button class="btn btn-ghost" id="btnReviewPoster" style="font-size:.9rem;padding:10px 18px;">📖 Lihat Teori</button>
+    </div>
+    <div class="map-list" id="mapList"></div>
+  </section>
+
+  <!-- GAME -->
+  <section class="screen" id="screen-game">
+    <header class="topbar">
+      <button class="icon-btn" id="btnBackGame">←</button>
+      <h2 id="gameTitle">Level 1</h2>
+      <div class="chip" id="gameStars">⭐ <span>0</span></div>
+    </header>
+    <div class="game-body">
+      <div class="progress" id="progress"></div>
+      <div class="speech-row">
+        <div class="molie-wrap" data-molie="100"></div>
+        <div class="bubble" id="questionText"></div>
+      </div>
+      <div class="options" id="options"></div>
+    </div>
+  </section>
+
+  <!-- REWARD -->
+  <section class="screen" id="screen-reward">
+    <div class="molie-wrap" data-molie="150"></div>
+    <h2 class="reward-title" id="rewardTitle">HEBAT!</h2>
+    <div class="reward-stars">
+      <div class="rstar" id="rs1">⭐</div>
+      <div class="rstar" id="rs2">⭐</div>
+      <div class="rstar" id="rs3">⭐</div>
+    </div>
+    <p class="reward-msg" id="rewardMsg"></p>
+    <div class="badge-new" id="rewardBadge" style="display:none;"></div>
+    <div class="reward-actions">
+      <button class="btn btn-ghost" id="btnRetry">🔁 Ulang</button>
+      <button class="btn btn-green" id="btnNext">➡️ Lanjut</button>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="screen" id="screen-profile">
+    <header class="topbar">
+      <button class="icon-btn" data-nav="menu">←</button>
+      <h2>Profil Penjelajah</h2>
+      <div style="width:48px"></div>
+    </header>
+    <div class="stat-row">
+      <div class="stat"><div class="num" id="pStars">0</div><div class="lbl">Bintang ⭐</div></div>
+      <div class="stat"><div class="num" id="pPoints">0</div><div class="lbl">Poin 🎯</div></div>
+    </div>
+    <div class="panel">
+      <h3 style="margin:0 0 12px;font-size:1rem;">🏅 Lencana</h3>
+      <div class="badge-grid" id="badgeGrid"></div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="screen" id="screen-settings">
+    <header class="topbar">
+      <button class="icon-btn" data-nav="menu">←</button>
+      <h2>Pengaturan</h2>
+      <div style="width:48px"></div>
+    </header>
+    <div class="panel">
+      <div class="toggle-row"><span>🔊 Suara</span><button class="switch on" id="setSound"></button></div>
+      <div class="toggle-row"><span>🎵 Musik</span><button class="switch on" id="setMusic"></button></div>
+      <div class="toggle-row"><span>🗣️ Narasi Suara</span><button class="switch on" id="setVoice"></button></div>
+    </div>
+    <div class="panel">
+      <div class="toggle-row"><span style="font-size:.9rem;opacity:.7;">Versi 1.3 · 26 November 2026</span></div>
+      <button class="btn btn-ghost" id="btnReset" style="width:100%;margin-top:10px;color:#C0392B;">🗑️ Reset Progres</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   POSTER CONFIG
+   ============================================================ */
+const POSTER_CONFIG = {
+  image: '',
+  hotspots: [
+    { layer: 0, x: 73, y: 36.5 },
+    { layer: 1, x: 65, y: 43   },
+    { layer: 2, x: 58, y: 48.75},
+    { layer: 3, x: 50, y: 55   }
+  ]
+};
+
+/* ============================================================
+   MASKOT MOLIE (SVG)
+   ============================================================ */
+function molieSVG(size){
+  return `
+  <svg class="molie" viewBox="0 0 200 210" width="${size}" height="${size*1.05}">
+    <ellipse cx="100" cy="196" rx="54" ry="10" fill="rgba(0,0,0,.10)"/>
+    <ellipse cx="78" cy="180" rx="17" ry="11" fill="#8B5E34"/>
+    <ellipse cx="122" cy="180" rx="17" ry="11" fill="#8B5E34"/>
+    <ellipse cx="100" cy="140" rx="50" ry="44" fill="#A9714B"/>
+    <ellipse cx="100" cy="148" rx="31" ry="29" fill="#E8C39E"/>
+    <circle cx="56" cy="74" r="19" fill="#A9714B"/>
+    <circle cx="56" cy="74" r="10" fill="#F4B6A0"/>
+    <circle cx="144" cy="74" r="19" fill="#A9714B"/>
+    <circle cx="144" cy="74" r="10" fill="#F4B6A0"/>
+    <circle cx="100" cy="92" r="47" fill="#A9714B"/>
+    <circle cx="66" cy="104" r="11" fill="#FF9EB5" opacity=".9"/>
+    <circle cx="134" cy="104" r="11" fill="#FF9EB5" opacity=".9"/>
+    <ellipse cx="100" cy="118" rx="27" ry="18" fill="#E8C39E"/>
+    <ellipse cx="100" cy="107" rx="8" ry="6" fill="#4A2C00"/>
+    <path d="M100 113 q-10 13 -19 5" stroke="#4A2C00" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+    <path d="M100 113 q10 13 19 5" stroke="#4A2C00" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+    <circle cx="82" cy="86" r="13" fill="#fff"/>
+    <circle cx="118" cy="86" r="13" fill="#fff"/>
+    <circle cx="84" cy="88" r="6.2" fill="#2A1A00"/>
+    <circle cx="120" cy="88" r="6.2" fill="#2A1A00"/>
+    <circle cx="86" cy="85.5" r="2.2" fill="#fff"/>
+    <circle cx="122" cy="85.5" r="2.2" fill="#fff"/>
+    <circle cx="82" cy="86" r="16" fill="none" stroke="#4A2C00" stroke-width="3"/>
+    <circle cx="118" cy="86" r="16" fill="none" stroke="#4A2C00" stroke-width="3"/>
+    <path d="M98 86 h4" stroke="#4A2C00" stroke-width="3" stroke-linecap="round"/>
+    <path d="M52 64 a48 42 0 0 1 96 0 z" fill="#FFC93C"/>
+    <rect x="47" y="60" width="106" height="13" rx="6.5" fill="#F2B705"/>
+    <line x1="100" y1="20" x2="100" y2="34" stroke="#F2B705" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="100" cy="21" r="11" fill="#FFF3B0" opacity=".85"/>
+    <circle cx="100" cy="21" r="5.5" fill="#FFE066"/>
+  </svg>`;
+}
+document.querySelectorAll('[data-molie]').forEach(el=>{
+  el.innerHTML = molieSVG(parseInt(el.dataset.molie,10)||140);
+});
+
+/* ============================================================
+   SUARA
+   ============================================================ */
+let actx=null;
+function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return actx; }
+function tone(freq, dur=.15, type='sine', vol=.18, delay=0){
+  if(!state.sound) return;
+  const c=AC(); if(!c) return;
+  const t=c.currentTime+delay;
+  const o=c.createOscillator(), g=c.createGain();
+  o.type=type; o.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(vol,t+.01);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(t); o.stop(t+dur+.02);
+}
+const sfx = {
+  pop(){ tone(620,.08,'square',.12); tone(920,.08,'square',.08,.05); },
+  ding(){ tone(880,.14,'sine',.2); tone(1320,.18,'sine',.14,.09); tone(1760,.2,'sine',.09,.18); },
+  boing(){ tone(300,.18,'triangle',.16); tone(200,.2,'triangle',.12,.1); },
+  twinkle(){ [1046,1318,1568,2093].forEach((f,i)=>tone(f,.16,'sine',.13,i*.06)); },
+  whoosh(){ tone(500,.3,'sawtooth',.07); tone(180,.35,'sawtooth',.06,.08); },
+  win(){ [523,659,784,1046].forEach((f,i)=>tone(f,.22,'triangle',.15,i*.11)); }
+};
+
+function speak(text){
+  if(!state.voice || !state.sound) return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='id-ID'; u.rate=.95; u.pitch=1.35;
+    const v=speechSynthesis.getVoices().find(v=>v.lang.startsWith('id'));
+    if(v) u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const STORE_KEY='molie-bumi-v1';
+const state = {
+  levelStars:[0,0,0,0],
+  visitedPoster:[],
+  sound:true, music:true, voice:true,
+  load(){
+    try{
+      const s=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');
+      Object.assign(this,s);
+      if(!Array.isArray(this.levelStars)||this.levelStars.length!==4) this.levelStars=[0,0,0,0];
+      if(!Array.isArray(this.visitedPoster)) this.visitedPoster=[];
+    }catch(e){}
+  },
+  save(){
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      levelStars:this.levelStars,
+      visitedPoster:this.visitedPoster,
+      sound:this.sound, music:this.music, voice:this.voice
+    }));
+  },
+  get totalStars(){ return this.levelStars.reduce((a,b)=>a+b,0); },
+  get points(){ return this.totalStars*10; }
+};
+state.load();
+
+/* ============================================================
+   DATA LEVEL
+   ============================================================ */
+const LAYER_COLORS = ['🟫','🟧','🟥','🟡'];
+
+const LEVELS = [
+  {
+    id:0, name:'Kerak Bumi', sub:'Rumah si Cacing', color:'#C68642', color2:'#E0A15F',
+    emoji:'🪱', badge:'Penjelajah Pemula',
+    theory:{
+      title:'Kerak Bumi',
+      desc:'Hai! Aku Molie! Ini kerak bumi, lapisan paling luar dan paling tipis. Di sinilah kita tinggal, ada tanah, gunung, laut, dan semua makhluk hidup!',
+      fact:'Tebal kerak bumi hanya sekitar 30 sampai 70 km. Kalau bumi sebesar apel, kerak cuma setipis kulit apelnya!'
+    },
+    questions:[
+      { q:'Lapisan paling luar bumi, tempat kita tinggal, disebut…',
+        opts:[{e:'🟫',t:'Kerak Bumi'},{e:'🟧',t:'Mantel'},{e:'🟥',t:'Inti Luar'},{e:'🟡',t:'Inti Dalam'}], a:0 },
+      { q:'Hewan kecil yang suka tinggal di dalam tanah adalah…',
+        opts:[{e:'🐦',t:'Burung'},{e:'🪱',t:'Cacing'},{e:'🐟',t:'Ikan'},{e:'🦋',t:'Kupu-kupu'}], a:1 },
+      { q:'Kerak bumi adalah lapisan bumi yang paling…',
+        opts:[{e:'⬇️',t:'Dalam'},{e:'↔️',t:'Tengah'},{e:'⬆️',t:'Luar'},{e:'🔽',t:'Bawah'}], a:2 }
+    ]
+  },
+  {
+    id:1, name:'Mantel', sub:'Lautan Api', color:'#FF8C42', color2:'#FFAE73',
+    emoji:'🌋', badge:'Sahabat Magma',
+    theory:{
+      title:'Mantel Bumi',
+      desc:'Wah, panas! Ini mantel bumi. Di bawah kerak ada lapisan batu panas yang mengalir pelan-pelan seperti karamel. Magma bergerak di sini dan bisa keluar lewat gunung berapi!',
+      fact:'Suhu mantel bisa mencapai 3.700 derajat Celsius. Lebih panas dari lava gunung berapi!'
+    },
+    questions:[
+      { q:'Lapisan yang ada tepat di bawah kerak bumi disebut…',
+        opts:[{e:'🟧',t:'Mantel'},{e:'🟥',t:'Inti Luar'},{e:'🟡',t:'Inti Dalam'},{e:'☁️',t:'Awan'}], a:0 },
+      { q:'Batuan panas yang cair di dalam bumi disebut…',
+        opts:[{e:'🧊',t:'Es'},{e:'🔥',t:'Magma'},{e:'💧',t:'Air'},{e:'🏖️',t:'Pasir'}], a:1 },
+      { q:'Gunung berapi bisa meletus karena…',
+        opts:[{e:'🌧️',t:'Hujan turun'},{e:'🌋',t:'Magma naik ke permukaan'},{e:'💨',t:'Angin kencang'},{e:'🌍',t:'Bumi berputar'}], a:1 },
+      { q:'Mantel bumi terbuat dari…',
+        opts:[{e:'🪨',t:'Batuan panas'},{e:'☁️',t:'Kapas'},{e:'🪵',t:'Kayu'},{e:'🪟',t:'Kaca'}], a:0 }
+    ]
+  },
+  {
+    id:2, name:'Inti Luar', sub:'Logam Cair', color:'#FF4E3A', color2:'#FF7F70',
+    emoji:'🧲', badge:'Ahli Magnet',
+    theory:{
+      title:'Inti Luar',
+      desc:'Kita makin dalam! Ini inti luar bumi. Terbuat dari besi dan nikel yang cair. Gerakannya menciptakan medan magnet bumi yang melindungi kita dari angin matahari!',
+      fact:'Berkat inti luar, kompas bisa menunjuk arah utara dan selatan. Keren, kan?'
+    },
+    questions:[
+      { q:'Lapisan yang ada di bawah mantel disebut…',
+        opts:[{e:'🟥',t:'Inti Luar'},{e:'🟫',t:'Kerak'},{e:'🟡',t:'Inti Dalam'},{e:'🌱',t:'Rumput'}], a:0 },
+      { q:'Inti luar bumi berwujud…',
+        opts:[{e:'🧱',t:'Padat'},{e:'💧',t:'Cair'},{e:'💨',t:'Gas'},{e:'🍚',t:'Bubuk'}], a:1 },
+      { q:'Inti luar bumi terbuat dari logam…',
+        opts:[{e:'🥇',t:'Emas dan Perak'},{e:'⚙️',t:'Besi dan Nikel'},{e:'🪵',t:'Kayu dan Batu'},{e:'💧',t:'Air dan Udara'}], a:1 },
+      { q:'Medan magnet bumi berasal dari lapisan…',
+        opts:[{e:'🟫',t:'Kerak'},{e:'🟧',t:'Mantel'},{e:'🟥',t:'Inti Luar'},{e:'☁️',t:'Awan'}], a:2 }
+    ]
+  },
+  {
+    id:3, name:'Inti Dalam', sub:'Bola Emas Super Panas', color:'#E8B21E', color2:'#FFD93D',
+    emoji:'⚡', badge:'Master Bumi',
+    theory:{
+      title:'Inti Dalam',
+      desc:'Yeay! Kita sampai di pusat bumi! Ini inti dalam, bola padat yang super panas, terbuat dari besi dan nikel. Ini titik paling panas di bumi!',
+      fact:'Suhu inti dalam sekitar 5.400 derajat Celsius, sama panasnya dengan permukaan matahari!'
+    },
+    questions:[
+      { q:'Lapisan paling dalam bumi adalah…',
+        opts:[{e:'🟡',t:'Inti Dalam'},{e:'🟧',t:'Mantel'},{e:'🟫',t:'Kerak'},{e:'🟥',t:'Inti Luar'}], a:0 },
+      { q:'Inti dalam bumi berwujud…',
+        opts:[{e:'💧',t:'Cair'},{e:'🧱',t:'Padat'},{e:'💨',t:'Gas'},{e:'☁️',t:'Uap'}], a:1 },
+      { q:'Suhu di inti dalam bumi sangat…',
+        opts:[{e:'🧊',t:'Dingin'},{e:'❄️',t:'Sejuk'},{e:'🔥',t:'Panas sekali'},{e:'☀️',t:'Hangat'}], a:2 },
+      { q:'Bumi tersusun dari berapa lapisan utama?',
+        opts:[{e:'2️⃣',t:'2 lapisan'},{e:'3️⃣',t:'3 lapisan'},{e:'4️⃣',t:'4 lapisan'},{e:'5️⃣',t:'5 lapisan'}], a:2 },
+      { q:'Urutan lapisan bumi dari luar ke dalam adalah…',
+        opts:[{e:'🟫🟧🟥🟡',t:'Kerak, Mantel, Inti Luar, Inti Dalam'},
+              {e:'🟧🟫🟡🟥',t:'Mantel, Kerak, Inti Dalam, Inti Luar'},
+              {e:'🟡🟥🟧🟫',t:'Inti Dalam, Inti Luar, Mantel, Kerak'},
+              {e:'🟫🟥🟧🟡',t:'Kerak, Inti Luar, Mantel, Inti Dalam'}], a:0 }
+    ]
+  }
+];
+
+/* ============================================================
+   NAVIGASI
+   ============================================================ */
+const screens = ['menu','poster','map','game','reward','profile','settings'];
+function go(name){
+  screens.forEach(s=>document.getElementById('screen-'+s).classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.screen').forEach(s=>s.scrollTop=0);
+  if(name==='menu') renderMenuStars();
+  if(name==='map') renderMap();
+  if(name==='profile') renderProfile();
+  sfx.pop();
+}
+document.querySelectorAll('[data-nav]').forEach(b=>{
+  b.addEventListener('click',()=>go(b.dataset.nav));
+});
+
+/* ============================================================
+   MENU
+   ============================================================ */
+function renderMenuStars(){
+  document.querySelector('#menuStars span').textContent = state.totalStars;
+}
+document.getElementById('btnStart').addEventListener('click',()=>startPoster('menu'));
+document.getElementById('btnProfile').addEventListener('click',()=>go('profile'));
+document.getElementById('btnSettings').addEventListener('click',()=>go('settings'));
+
+(function(){
+  const bulan=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const d=new Date();
+  document.getElementById('todayDate').textContent=d.getDate()+' '+bulan[d.getMonth()]+' '+d.getFullYear();
+})();
+
+function syncToggleUI(){
+  document.getElementById('btnSound').classList.toggle('off',!state.sound);
+  document.getElementById('btnMusic').classList.toggle('off',!state.music);
+  document.getElementById('setSound').classList.toggle('on',state.sound);
+  document.getElementById('setMusic').classList.toggle('on',state.music);
+  document.getElementById('setVoice').classList.toggle('on',state.voice);
+}
+document.getElementById('btnSound').addEventListener('click',()=>{ state.sound=!state.sound; state.save(); syncToggleUI(); sfx.pop(); });
+document.getElementById('btnMusic').addEventListener('click',()=>{ state.music=!state.music; state.save(); syncToggleUI(); sfx.pop(); });
+document.getElementById('setSound').addEventListener('click',()=>{ state.sound=!state.sound; state.save(); syncToggleUI(); sfx.pop(); });
+document.getElementById('setMusic').addEventListener('click',()=>{ state.music=!state.music; state.save(); syncToggleUI(); sfx.pop(); });
+document.getElementById('setVoice').addEventListener('click',()=>{ state.voice=!state.voice; state.save(); syncToggleUI(); sfx.pop(); });
+document.getElementById('btnReset').addEventListener('click',()=>{
+  if(confirm('Reset semua progres (bintang, lencana, dan jelajah poster)?')){
+    state.levelStars=[0,0,0,0];
+    state.visitedPoster=[];
+    state.save();
+    renderMenuStars();
+    go('menu');
+  }
+});
+syncToggleUI();
+
+/* ============================================================
+   POSTER TEORI
+   ============================================================ */
+let visitedLayers = new Set();
+let posterSource = 'menu';
+
+function startPoster(source = 'menu'){
+  posterSource = source;
+  visitedLayers = new Set(state.visitedPoster);
+
+  document.querySelector('#posterChip span').textContent = state.totalStars;
+
+  const img = document.getElementById('posterImg');
+  const fallback = document.getElementById('posterFallback');
+
+  if(POSTER_CONFIG.image && POSTER_CONFIG.image.trim() !== ''){
+    img.src = POSTER_CONFIG.image;
+    img.style.display = 'block';
+    fallback.style.display = 'none';
+    img.onerror = () => {
+      img.style.display = 'none';
+      fallback.style.display = 'block';
+      renderFallbackPoster();
+    };
+  } else {
+    img.style.display = 'none';
+    fallback.style.display = 'block';
+    renderFallbackPoster();
+  }
+
+  const bar = document.getElementById('posterDepthbar');
+  bar.innerHTML = '';
+  LEVELS.forEach((l, idx)=>{
+    const p = document.createElement('span');
+    p.className = 'depth-pill' + (visitedLayers.has(idx) ? ' done' : '');
+    p.dataset.layerIdx = idx;
+    p.textContent = l.name;
+    bar.appendChild(p);
+  });
+
+  renderHotspots();
+
+  document.getElementById('piEmoji').textContent = '🌍';
+  document.getElementById('piTitle').textContent = 'Ayo Jelajahi!';
+  document.getElementById('piDesc').textContent = 'Ketuk titik berwarna di poster untuk mempelajari setiap lapisan bumi.';
+  document.getElementById('piFactCard').style.display = 'none';
+
+  updatePosterProgress();
+
+  go('poster');
+
+  if(visitedLayers.size >= 4){
+    speak('Poster lapisan bumi. Ketuk titik untuk mengulang pelajaran!');
+  } else {
+    speak('Selamat datang! Ketuk titik berwarna di poster untuk mempelajari setiap lapisan bumi!');
+  }
+}
+
+function renderFallbackPoster(){
+  document.getElementById('posterFallback').innerHTML = `
+    <svg viewBox="0 0 320 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Poster Lapisan Bumi">
+      <defs>
+        <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFF3E0"/>
+          <stop offset="100%" stop-color="#FFD9A8"/>
+        </linearGradient>
+      </defs>
+      <rect width="320" height="400" fill="url(#bgGrad)" rx="20"/>
+      <rect x="0" y="0" width="320" height="52" fill="#9B5DE5"/>
+      <text x="160" y="34" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="18" fill="#fff">LAPISAN BUMI</text>
+      <text x="24" y="86" font-size="16">✨</text>
+      <text x="284" y="98" font-size="14">⭐</text>
+      <text x="20" y="372" font-size="14">🌟</text>
+      <text x="286" y="366" font-size="12">✨</text>
+      <text x="38" y="130" font-size="18">☀️</text>
+      <text x="272" y="330" font-size="16">💫</text>
+      <g transform="translate(160, 210)">
+        <circle r="135" fill="#E8F4FF" opacity=".4"/>
+        <circle r="120" fill="#C68642"/>
+        <circle r="80" fill="#FF8C42"/>
+        <circle r="48" fill="#FF4E3A"/>
+        <circle r="22" fill="#FFD93D"/>
+        <circle r="120" fill="none" stroke="#7BC96F" stroke-width="6"/>
+        <circle r="5" fill="#FFF3B0" opacity=".9"/>
+        <circle cx="-90" cy="-40" r="3" fill="#A9714B" opacity=".6"/>
+        <circle cx="-60" cy="70" r="4" fill="#A9714B" opacity=".5"/>
+        <circle cx="80" cy="-30" r="3" fill="#A9714B" opacity=".6"/>
+        <circle cx="95" cy="55" r="3" fill="#A9714B" opacity=".5"/>
+        <circle cx="-100" cy="30" r="3" fill="#A9714B" opacity=".5"/>
+      </g>
+      <text x="160" y="382" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="10" fill="#7A5A30">Ketuk titik untuk belajar!</text>
+    </svg>
+  `;
+}
+
+function renderHotspots(){
+  document.querySelectorAll('.hotspot').forEach(h => h.remove());
+  const wrap = document.getElementById('posterWrap');
+
+  POSTER_CONFIG.hotspots.forEach((h, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'hotspot' + (visitedLayers.has(h.layer) ? ' visited' : '');
+    btn.type = 'button';
+    btn.style.left = h.x + '%';
+    btn.style.top  = h.y + '%';
+    btn.dataset.layer = h.layer;
+    btn.innerHTML = `<span class="hs-num">${idx+1}</span>`;
+    btn.setAttribute('aria-label', LEVELS[h.layer].theory.title);
+    btn.addEventListener('click', () => onHotspotClick(h.layer, btn));
+    wrap.appendChild(btn);
+  });
+}
+
+function onHotspotClick(layerIdx, btn){
+  const isNew = !visitedLayers.has(layerIdx);
+  visitedLayers.add(layerIdx);
+  state.visitedPoster = Array.from(visitedLayers);
+  state.save();
+
+  btn.classList.add('visited');
+
+  if(isNew){
+    sfx.ding();
+    setTimeout(()=>sfx.twinkle(), 100);
+    const r = btn.getBoundingClientRect();
+    confettiBurstAt(r.left + r.width/2, r.top + r.height/2, 8);
+  }
+
+  showLayerInfo(layerIdx);
+  updatePosterProgress();
+}
+
+function showLayerInfo(layerIdx){
+  const lv = LEVELS[layerIdx];
+  document.getElementById('piEmoji').textContent = LAYER_COLORS[layerIdx];
+  document.getElementById('piTitle').textContent = lv.theory.title;
+  document.getElementById('piDesc').textContent = lv.theory.desc;
+  document.getElementById('piFact').textContent = lv.theory.fact;
+  document.getElementById('piFactCard').style.display = 'flex';
+
+  const info = document.getElementById('posterInfo');
+  info.style.animation = 'none';
+  void info.offsetWidth;
+  info.style.animation = '';
+
+  speak(lv.theory.desc + ' ' + lv.theory.fact);
+}
+
+function updatePosterProgress(){
+  const count = visitedLayers.size;
+  document.getElementById('ppFill').style.width = (count/4*100)+'%';
+  document.getElementById('ppText').textContent = count+' / 4';
+
+  document.querySelectorAll('#posterDepthbar .depth-pill').forEach((p, idx)=>{
+    if(visitedLayers.has(idx)) p.classList.add('done');
+    else p.classList.remove('done');
+  });
+
+  const btn = document.getElementById('btnStartFromPoster');
+  if(count >= 4){
+    btn.disabled = false;
+    btn.textContent = posterSource === 'map' ? 'Kembali ke Peta' : 'Mulai Petualangan!';
+    if(count === 4 && !btn.dataset.celebrated && posterSource === 'menu'){
+      btn.dataset.celebrated = '1';
+      setTimeout(()=>{
+        speak('Hebat! Kamu sudah menjelajahi semua lapisan bumi. Sekarang kita mulai petualangan!');
+        confettiBurst(25);
+      }, 400);
+    }
+  } else {
+    btn.disabled = true;
+    btn.textContent = 'Jelajahi dulu ('+count+'/4)';
+    delete btn.dataset.celebrated;
+  }
+}
+
+document.getElementById('btnStartFromPoster').addEventListener('click', ()=>{
+  if(posterSource === 'menu' && visitedLayers.size < 4) return;
+  go('map');
+});
+
+document.getElementById('btnPosterBack').addEventListener('click', ()=>{
+  go(posterSource === 'menu' ? 'menu' : 'map');
+});
+
+/* ============================================================
+   MAP
+   ============================================================ */
+function isUnlocked(i){ return i===0 || state.levelStars[i-1]>=1; }
+
+function renderMap(){
+  const wrap=document.getElementById('mapList');
+  wrap.innerHTML='';
+  document.querySelector('#mapStars span').textContent = state.totalStars;
+  LEVELS.forEach((lv,i)=>{
+    const unlocked=isUnlocked(i);
+    const stars=state.levelStars[i];
+    const starStr = stars>0 ? '⭐'.repeat(stars)+'☆'.repeat(3-stars) : '☆☆☆';
+    const btn=document.createElement('button');
+    btn.className='level-card'+(unlocked?'':' locked');
+    btn.style.background='linear-gradient(135deg, '+lv.color2+', '+lv.color+')';
+    btn.style.animationDelay=(i*.08)+'s';
+    btn.innerHTML=`
+      <div class="emoji-badge">${unlocked?lv.emoji:'🔒'}</div>
+      <div class="lc-text">
+        <div class="lc-num">LEVEL ${i+1}</div>
+        <div class="lc-name">${lv.name}</div>
+        <div class="lc-sub">${lv.sub}</div>
+        <div class="lc-stars">${unlocked?starStr:'Terkunci'}</div>
+      </div>
+      ${unlocked?'<div style="font-size:1.4rem;opacity:.85;">▶</div>':'<div class="lock-ico">🔒</div>'}
+    `;
+    if(unlocked) btn.addEventListener('click',()=>startQuiz(i));
+    wrap.appendChild(btn);
+  });
+}
+
+document.getElementById('btnReviewPoster').addEventListener('click', ()=>{
+  startPoster('map');
+});
+
+/* ============================================================
+   GAMEPLAY
+   ============================================================ */
+let game = null;
+
+function startQuiz(i){
+  const lv = LEVELS[i];
+  game = { level:i, qi:0, mistakes:0, sessionStars:0, locked:false };
+  document.getElementById('gameTitle').textContent = 'Level '+(i+1)+' · '+lv.name;
+  updateGameStars();
+  sfx.whoosh();
+  go('game');
+  setTimeout(()=>renderQuestion(), 250);
+}
+
+function updateGameStars(){
+  document.querySelector('#gameStars span').textContent = game.sessionStars;
+}
+
+document.getElementById('btnBackGame').addEventListener('click',()=>{
+  if(confirm('Keluar dari kuis? Progres level ini tidak disimpan.')){
+    go('map');
+  }
+});
+
+function renderQuestion(){
+  const lv=LEVELS[game.level];
+  const q=lv.questions[game.qi];
+  game.locked=false;
+
+  const prog=document.getElementById('progress');
+  prog.innerHTML='';
+  lv.questions.forEach((_,idx)=>{
+    const d=document.createElement('div');
+    d.className='dot'+(idx<=game.qi?' on':'');
+    prog.appendChild(d);
+  });
+
+  const qt=document.getElementById('questionText');
+  qt.textContent = q.q;
+  qt.style.animation='none'; void qt.offsetWidth; qt.style.animation='';
+  speak(q.q);
+
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  q.opts.forEach((o,idx)=>{
+    const b=document.createElement('button');
+    b.className='option';
+    b.style.animationDelay=(idx*.06)+'s';
+    b.innerHTML=`<span class="opt-emoji">${o.e}</span><span>${o.t}</span>`;
+    b.addEventListener('click',()=>answer(idx,b));
+    opts.appendChild(b);
+  });
+}
+
+function answer(idx, btn){
+  if(game.locked) return;
+  game.locked=true;
+  const lv=LEVELS[game.level];
+  const q=lv.questions[game.qi];
+
+  if(idx===q.a){
+    btn.classList.add('correct');
+    game.sessionStars++;
+    updateGameStars();
+    sfx.ding();
+    setTimeout(()=>sfx.twinkle(),120);
+    floatStar(btn);
+    confettiBurst(14);
+    jumpMolie('jump');
+    const praise=['Hebat sekali!','Kamu pintar!','Wah, benar!','Molie bangga padamu!','Keren!'];
+    speak(praise[Math.floor(Math.random()*praise.length)]);
+    setTimeout(nextQuestion, 1050);
+  } else {
+    game.mistakes++;
+    btn.classList.add('wrong');
+    btn.disabled=true;
+    sfx.boing();
+    jumpMolie('headshake');
+    speak('Coba lagi ya!');
+    setTimeout(()=>{ game.locked=false; }, 620);
+  }
+}
+
+function nextQuestion(){
+  const lv=LEVELS[game.level];
+  game.qi++;
+  if(game.qi >= lv.questions.length){
+    finishLevel();
+  } else {
+    renderQuestion();
+  }
+}
+
+function finishLevel(){
+  const lv=LEVELS[game.level];
+  let stars = game.mistakes===0 ? 3 : (game.mistakes===1 ? 2 : 1);
+  const prev = state.levelStars[game.level];
+  if(stars > prev) state.levelStars[game.level]=stars;
+  state.save();
+
+  document.getElementById('rewardTitle').textContent = stars===3 ? 'LUAR BIASA!' : (stars===2 ? 'HEBAT!' : 'BAGUS!');
+  const rs=[document.getElementById('rs1'),document.getElementById('rs2'),document.getElementById('rs3')];
+  rs.forEach(r=>{ r.classList.remove('lit'); r.style.animation='none'; });
+  void rs[0].offsetWidth;
+  rs.forEach((r,i)=>{ if(i<stars){ setTimeout(()=>{ r.classList.add('lit'); sfx.twinkle(); }, 300+i*380); } });
+
+  document.getElementById('rewardMsg').textContent =
+    'Kamu dapat '+stars+' bintang · +'+(stars*10)+' poin';
+
+  const badgeEl=document.getElementById('rewardBadge');
+  if(prev===0){
+    badgeEl.style.display='block';
+    badgeEl.innerHTML='🏅 Lencana baru: <strong>'+lv.badge+'</strong>';
+  } else {
+    badgeEl.style.display='none';
+  }
+
+  const nextBtn=document.getElementById('btnNext');
+  const isLast = game.level===LEVELS.length-1;
+  nextBtn.textContent = isLast ? 'Selesai' : 'Lanjut';
+  nextBtn.onclick=()=>{
+    if(isLast){ go('menu'); }
+    else { startQuiz(game.level+1); }
+  };
+  document.getElementById('btnRetry').onclick=()=>startQuiz(game.level);
+
+  setTimeout(()=>{ go('reward'); sfx.win(); confettiBurst(30); }, stars*380+450);
+}
+
+/* ============================================================
+   EFEK
+   ============================================================ */
+function jumpMolie(cls){
+  const m=document.querySelector('#screen-game .molie');
+  if(!m) return;
+  m.classList.remove('jump','headshake');
+  void m.offsetWidth;
+  m.classList.add(cls);
+  setTimeout(()=>m.classList.remove(cls), 700);
+}
+
+function floatStar(el){
+  const r=el.getBoundingClientRect();
+  const s=document.createElement('div');
+  s.className='float-star';
+  s.textContent='⭐';
+  s.style.left=(r.left+r.width/2-14)+'px';
+  s.style.top=(r.top+r.height/2-20)+'px';
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),950);
+}
+
+function confettiBurst(n){
+  confettiBurstAt(Math.random()*window.innerWidth, 80, n);
+}
+
+function confettiBurstAt(x, y, n){
+  const layer=document.getElementById('confettiLayer');
+  const emojis=['⭐','✨','🌟','💫','🎉'];
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    c.style.left=(x + (Math.random()-.5)*160)+'px';
+    c.style.top=(y + (Math.random()-.5)*30)+'px';
+    c.style.animationDuration=(1.6+Math.random()*1.4)+'s';
+    c.style.animationDelay=(Math.random()*.3)+'s';
+    c.style.fontSize=(1.1+Math.random()*1.1)+'rem';
+    layer.appendChild(c);
+    setTimeout(()=>c.remove(),3200);
+  }
+}
+
+/* ============================================================
+   PROFIL
+   ============================================================ */
+function renderProfile(){
+  document.getElementById('pStars').textContent = state.totalStars;
+  document.getElementById('pPoints').textContent = state.points;
+  const grid=document.getElementById('badgeGrid');
+  grid.innerHTML='';
+  LEVELS.forEach((lv,i)=>{
+    const owned = state.levelStars[i]>=1;
+    const d=document.createElement('div');
+    d.className='badge'+(owned?'':' locked');
+    d.innerHTML=`<span class="b-ico">${owned?'🏅':'🔒'}</span>${lv.badge}`;
+    grid.appendChild(d);
+  });
+}
+
+/* ============================================================
+   MUSIK LATAR
+   ============================================================ */
+let musicTimer=null;
+function startMusic(){
+  if(musicTimer) return;
+  const notes=[523,587,659,784,659,587,523,392];
+  let i=0;
+  musicTimer=setInterval(()=>{
+    if(!state.music || !state.sound) return;
+    tone(notes[i%notes.length], .5, 'triangle', .045);
+    i++;
+  }, 620);
+}
+document.addEventListener('click',()=>{ AC(); startMusic(); }, {once:true});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderMenuStars();
+</script>
+</body>
+</html>
