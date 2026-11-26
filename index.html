@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Petualangan Ke Bawah Tanah Bumi 🌍</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,9 +92,30 @@
 
   .map-review-btn{text-align:center;margin-bottom:10px;}
 
-  /* POSTER */
+  /* ============ POSTER ============ */
   #screen-poster{padding-bottom:16px;}
   .poster-scroll{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:12px;align-items:center;min-height:0;padding-bottom:6px;}
+
+  /* BANNER PETUNJUK */
+  .poster-instruction{
+    background:linear-gradient(135deg,#FFF3B0,#FFD93D);
+    border-radius:16px;padding:10px 16px;
+    font-size:.9rem;font-weight:700;color:#7A5A00;
+    text-align:center;
+    box-shadow:0 4px 0 #E8B21E, 0 6px 12px rgba(232,178,30,.3);
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    max-width:520px;width:100%;
+    animation:instrPulse 2s ease-in-out infinite;
+  }
+  @keyframes instrPulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.02);}
+  }
+  .instr-icon{font-size:1.2rem;animation:handPoint 1s ease-in-out infinite;display:inline-block;}
+  @keyframes handPoint{
+    0%,100%{transform:translateY(0) rotate(-10deg);}
+    50%{transform:translateY(-4px) rotate(0deg);}
+  }
 
   .poster-depthbar{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;flex:0 0 auto;}
   .depth-pill{font-size:.7rem;font-weight:700;padding:5px 10px;border-radius:999px;background:#fff;opacity:.5;letter-spacing:.4px;transition:.25s;box-shadow:0 3px 0 #D9C8B0;color:#7A5A30;}
@@ -104,27 +125,120 @@
 
   .poster-frame{width:100%;display:flex;justify-content:center;padding:4px 0;}
   .poster-wrap{position:relative;display:inline-block;max-width:100%;}
-  #posterImg{display:none;max-width:100%;max-height:min(48vh,420px);width:auto;height:auto;object-fit:contain;border-radius:20px;box-shadow:0 8px 0 #D9C8B0, 0 14px 22px rgba(0,0,0,.14);}
-  #posterFallback{display:block;max-width:100%;max-height:min(48vh,420px);}
-  #posterFallback svg{display:block;width:100%;height:auto;max-height:min(48vh,420px);border-radius:20px;box-shadow:0 8px 0 #D9C8B0, 0 14px 22px rgba(0,0,0,.14);}
+  
+  #posterImg{display:none;max-width:100%;max-height:min(48vh,430px);border-radius:20px;box-shadow:0 8px 0 #D9C8B0, 0 14px 22px rgba(0,0,0,.14);}
+  #posterFallback{display:block;max-width:100%;max-height:min(48vh,430px);}
+  #posterFallback svg{display:block;width:100%;height:auto;max-height:min(48vh,430px);border-radius:20px;box-shadow:0 8px 0 #D9C8B0, 0 14px 22px rgba(0,0,0,.14);}
 
-  .hotspot{position:absolute;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;border:3px solid #fff;background:var(--gold);color:#4A2C00;cursor:pointer;font-family:inherit;font-weight:800;font-size:1rem;display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.35);z-index:3;transition:transform .15s, background .25s;}
-  .hotspot::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:3px solid var(--gold);opacity:.6;animation:hotspotRing 1.8s ease-out infinite;}
-  @keyframes hotspotRing{0%{transform:scale(1);opacity:.7;}100%{transform:scale(1.9);opacity:0;}}
-  .hotspot:hover{transform:translate(-50%,-50%) scale(1.12);}
-  .hotspot.visited{background:#4CC38A;color:#fff;border-color:#fff;}
-  .hotspot.visited::before{display:none;}
-  .hotspot.visited::after{content:'✓';position:absolute;font-size:1.1rem;font-weight:900;}
-  .hotspot.visited .hs-num{display:none;}
-  .hs-label{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);background:#fff;color:#4A2C00;font-size:.78rem;font-weight:700;padding:4px 8px;border-radius:8px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.2);pointer-events:none;opacity:.95;}
-  .hs-label::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:#fff;}
+  /* ============ HOTSPOT (Dot + Label) ============ */
+  .hotspot{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    width:44px;height:44px;
+    background:none;border:none;padding:0;cursor:pointer;
+    z-index:3;
+    font-family:inherit;
+  }
+  .hotspot .dot{
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    width:22px;height:22px;border-radius:50%;
+    background:var(--hs-color,var(--gold));
+    border:3px solid #fff;
+    box-shadow:0 0 0 3px rgba(255,255,255,.5), 0 4px 10px rgba(0,0,0,.35);
+    transition:transform .2s;
+  }
+  .hotspot .dot::before{
+    content:'';position:absolute;inset:-8px;border-radius:50%;
+    border:2.5px solid var(--hs-color,var(--gold));
+    animation:hotspotRing 1.8s ease-out infinite;
+    pointer-events:none;
+  }
+  @keyframes hotspotRing{
+    0%{transform:scale(1);opacity:1;}
+    100%{transform:scale(1.9);opacity:0;}
+  }
+  .hotspot:hover .dot{transform:translate(-50%,-50%) scale(1.15);}
+  .hotspot:active .dot{transform:translate(-50%,-50%) scale(.95);}
 
-  .poster-hint{font-size:.82rem;font-weight:600;color:#7A5A30;text-align:center;background:rgba(255,255,255,.85);padding:7px 14px;border-radius:999px;box-shadow:0 3px 0 rgba(217,200,176,.6);}
-  .poster-legend{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:420px;margin:4px 0;}
-  .poster-legend .lg-item{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:6px 10px;box-shadow:0 2px 0 #D9C8B0;font-size:.82rem;font-weight:600;}
-  .poster-legend .lg-num{width:24px;height:24px;border-radius:50%;background:var(--gold);color:#4A2C00;display:grid;place-items:center;font-size:.8rem;font-weight:800;flex:0 0 24px;}
-  .poster-legend .lg-dot{width:12px;height:12px;border-radius:50%;flex:0 0 12px;}
-  @media(max-width:480px){.hs-label{display:none;}}
+  /* LABEL (keterangan) */
+  .hotspot .label{
+    position:absolute;
+    top:50%;
+    left:calc(50% + 18px);
+    transform:translateY(-50%);
+    background:#fff;
+    color:var(--ink);
+    font-size:clamp(.62rem, 2.4vw, .75rem);
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+    box-shadow:0 3px 0 #D9C8B0, 0 4px 10px rgba(0,0,0,.2);
+    display:flex;align-items:center;gap:4px;
+    pointer-events:none;
+    transition:background .3s, color .3s;
+    animation:labelFloat 2.4s ease-in-out infinite;
+  }
+  @keyframes labelFloat{
+    0%,100%{transform:translateY(-50%);}
+    50%{transform:translateY(calc(-50% - 2px));}
+  }
+  /* Panah kecil di label */
+  .hotspot .label::before{
+    content:'';position:absolute;
+    left:-5px;top:50%;transform:translateY(-50%);
+    width:0;height:0;
+    border:5px solid transparent;
+    border-right-color:#fff;
+    border-left:0;
+    transition:border-right-color .3s;
+  }
+
+  /* Label di sisi KIRI (untuk inti dalam) */
+  .hotspot[data-side="left"] .label{
+    left:auto;
+    right:calc(50% + 18px);
+  }
+  .hotspot[data-side="left"] .label::before{
+    left:auto;right:-5px;
+    border-right-color:transparent;
+    border-left-color:#fff;
+    border-right:0;
+    border-left:5px solid #fff;
+    transition:border-left-color .3s;
+  }
+
+  /* State sudah dikunjungi */
+  .hotspot.visited .dot{
+    background:#4CC38A;
+    border-color:#fff;
+    box-shadow:0 0 0 3px rgba(76,195,138,.4), 0 4px 10px rgba(0,0,0,.35);
+    animation:popCheck .4s ease;
+  }
+  .hotspot.visited .dot::before{display:none;}
+  .hotspot.visited .dot::after{
+    content:'✓';
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:900;font-size:.9rem;
+  }
+  @keyframes popCheck{
+    0%{transform:translate(-50%,-50%) scale(1);}
+    50%{transform:translate(-50%,-50%) scale(1.3);}
+    100%{transform:translate(-50%,-50%) scale(1);}
+  }
+  .hotspot.visited .label{
+    background:#C8F5D8;
+    color:#1F5A32;
+    animation:none;
+    transform:translateY(-50%);
+  }
+  .hotspot.visited .label::before{border-right-color:#C8F5D8;}
+  .hotspot[data-side="left"].visited .label::before{
+    border-left-color:#C8F5D8;
+    border-right-color:transparent;
+  }
 
   .poster-progress{display:flex;align-items:center;gap:10px;width:100%;max-width:420px;font-size:.82rem;font-weight:700;color:#3C2A12;}
   .pp-bar{flex:1;height:10px;background:#E4D5C0;border-radius:999px;overflow:hidden;box-shadow:inset 0 2px 3px rgba(0,0,0,.1);}
@@ -150,8 +264,8 @@
   /* GAME */
   .game-body{flex:1;display:flex;flex-direction:column;gap:14px;min-height:0;}
   .progress{display:flex;gap:8px;justify-content:center;flex:0 0 auto;}
-  .dot{width:12px;height:12px;border-radius:50%;background:#fff;opacity:.45;transition:.3s;}
-  .dot.on{background:var(--gold);opacity:1;transform:scale(1.25);box-shadow:0 0 0 3px rgba(255,204,0,.35);}
+  .dot-progress{width:12px;height:12px;border-radius:50%;background:#fff;opacity:.45;transition:.3s;}
+  .dot-progress.on{background:var(--gold);opacity:1;transform:scale(1.25);box-shadow:0 0 0 3px rgba(255,204,0,.35);}
 
   .speech-row{display:flex;gap:12px;align-items:flex-start;flex:0 0 auto;}
   .speech-row .molie-wrap{flex:0 0 auto;}
@@ -200,6 +314,14 @@
   .switch::after{content:'';position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.25s;box-shadow:0 2px 5px rgba(0,0,0,.2);}
   .switch.on{background:#4CC38A;}
   .switch.on::after{transform:translateX(26px);}
+
+  /* Handle label overflow on very small screens */
+  @media (max-width:400px){
+    .hotspot .label{
+      font-size:.6rem;
+      padding:3px 8px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -218,7 +340,6 @@
     <div class="menu-top">
       <div class="chip" id="menuStars">⭐ <span>0</span></div>
       <div class="spacer"></div>
-      <a class="btn btn-ghost" href="guru.html" style="font-size:.85rem;padding:8px 14px;">👩‍🏫 Guru</a>
       <button class="icon-btn" id="btnSound">🔊</button>
       <button class="icon-btn" id="btnMusic">🎵</button>
     </div>
@@ -245,19 +366,20 @@
       <div class="chip" id="posterChip">⭐ <span>0</span></div>
     </header>
 
+    <div class="poster-instruction">
+      <span class="instr-icon">👆</span>
+      <span>Ketuk tiap titik berwarna pada poster untuk mengenal lapisan bumi!</span>
+    </div>
+
     <div class="poster-depthbar" id="posterDepthbar"></div>
 
     <div class="poster-scroll">
       <div class="poster-frame">
         <div class="poster-wrap" id="posterWrap">
-          <img id="posterImg" alt="Poster Lapisan Bumi" width="1536" height="1024">
+          <img id="posterImg" alt="Poster Lapisan Bumi">
           <div id="posterFallback"></div>
         </div>
       </div>
-
-      <div class="poster-hint">👆 Ketuk titik bernomor di poster untuk belajar!</div>
-
-      <div class="poster-legend" id="posterLegend"></div>
 
       <div class="poster-progress">
         <div class="pp-bar"><div class="pp-fill" id="ppFill"></div></div>
@@ -295,7 +417,7 @@
       <div class="chip" id="mapStars">⭐ <span>0</span></div>
     </header>
     <div class="map-review-btn">
-      <button class="btn btn-ghost" id="btnReviewPoster" style="font-size:.9rem;padding:10px 18px;">📖 Lihat Teori</button>
+      <button class="btn btn-ghost" id="btnReviewPoster" style="font-size:.9rem;padding:10px 18px;">📖 Lihat Teori Poster</button>
     </div>
     <div class="map-list" id="mapList"></div>
   </section>
@@ -364,7 +486,7 @@
       <div class="toggle-row"><span>🗣️ Narasi Suara</span><button class="switch on" id="setVoice"></button></div>
     </div>
     <div class="panel">
-      <div class="toggle-row"><span style="font-size:.9rem;opacity:.7;">Versi 1.3 · 26 November 2026</span></div>
+      <div class="toggle-row"><span style="font-size:.9rem;opacity:.7;">Versi 1.6 · 26 November 2026</span></div>
       <button class="btn btn-ghost" id="btnReset" style="width:100%;margin-top:10px;color:#C0392B;">🗑️ Reset Progres</button>
     </div>
   </section>
@@ -373,20 +495,24 @@
 
 <script>
 /* ============================================================
-   POSTER CONFIG
+   🖼️ POSTER CONFIG — dengan LABEL & SIDE
+   ============================================================
+   - label : teks yang muncul di dekat titik (bisa diubah)
+   - side  : 'right' (label di kanan titik) atau 'left' (label di kiri)
+   - color : warna titik (sesuai warna lapisan)
    ============================================================ */
 const POSTER_CONFIG = {
   image: 'poster-bumi.png',
   hotspots: [
-    { layer: 0, x: 73, y: 36.5 },
-    { layer: 1, x: 65, y: 43   },
-    { layer: 2, x: 58, y: 48.75},
-    { layer: 3, x: 50, y: 55   }
+    { layer: 0, x: 76.0, y: 26.0, side: 'right', color: '#C68642', label: 'Kerak Bumi' },
+    { layer: 1, x: 70.0, y: 42.0, side: 'right', color: '#FF8C42', label: 'Mantel' },
+    { layer: 2, x: 58.0, y: 55.0, side: 'right', color: '#FF4E3A', label: 'Inti Luar' },
+    { layer: 3, x: 48.0, y: 62.0, side: 'left',  color: '#E8B21E', label: 'Inti Dalam' }
   ]
 };
 
 /* ============================================================
-   MASKOT MOLIE (SVG)
+   1. MASKOT MOLIE (SVG)
    ============================================================ */
 function molieSVG(size){
   return `
@@ -428,7 +554,7 @@ document.querySelectorAll('[data-molie]').forEach(el=>{
 });
 
 /* ============================================================
-   SUARA
+   2. SUARA
    ============================================================ */
 let actx=null;
 function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return actx; }
@@ -466,7 +592,7 @@ function speak(text){
 }
 
 /* ============================================================
-   STATE
+   3. STATE
    ============================================================ */
 const STORE_KEY='molie-bumi-v1';
 const state = {
@@ -494,7 +620,7 @@ const state = {
 state.load();
 
 /* ============================================================
-   DATA LEVEL
+   4. DATA LEVEL
    ============================================================ */
 const LAYER_COLORS = ['🟫','🟧','🟥','🟡'];
 
@@ -504,8 +630,8 @@ const LEVELS = [
     emoji:'🪱', badge:'Penjelajah Pemula',
     theory:{
       title:'Kerak Bumi',
-      desc:'Hai! Aku Molie! Ini kerak bumi, lapisan paling luar dan paling tipis. Di sinilah kita tinggal, ada tanah, gunung, laut, dan semua makhluk hidup!',
-      fact:'Tebal kerak bumi hanya sekitar 30 sampai 70 km. Kalau bumi sebesar apel, kerak cuma setipis kulit apelnya!'
+      desc:'Hai! Aku Molie! Ini kerak bumi, lapisan paling luar dan paling tipis. Di sinilah kita tinggal — ada tanah, gunung, laut, dan semua makhluk hidup!',
+      fact:'Tebal kerak bumi hanya sekitar 30–70 km. Kalau bumi sebesar apel, kerak cuma setipis kulit apelnya!'
     },
     questions:[
       { q:'Lapisan paling luar bumi, tempat kita tinggal, disebut…',
@@ -522,7 +648,7 @@ const LEVELS = [
     theory:{
       title:'Mantel Bumi',
       desc:'Wah, panas! Ini mantel bumi. Di bawah kerak ada lapisan batu panas yang mengalir pelan-pelan seperti karamel. Magma bergerak di sini dan bisa keluar lewat gunung berapi!',
-      fact:'Suhu mantel bisa mencapai 3.700 derajat Celsius. Lebih panas dari lava gunung berapi!'
+      fact:'Suhu mantel bisa mencapai 3.700°C. Lebih panas dari lava gunung berapi!'
     },
     questions:[
       { q:'Lapisan yang ada tepat di bawah kerak bumi disebut…',
@@ -549,7 +675,7 @@ const LEVELS = [
       { q:'Inti luar bumi berwujud…',
         opts:[{e:'🧱',t:'Padat'},{e:'💧',t:'Cair'},{e:'💨',t:'Gas'},{e:'🍚',t:'Bubuk'}], a:1 },
       { q:'Inti luar bumi terbuat dari logam…',
-        opts:[{e:'🥇',t:'Emas dan Perak'},{e:'⚙️',t:'Besi dan Nikel'},{e:'🪵',t:'Kayu dan Batu'},{e:'💧',t:'Air dan Udara'}], a:1 },
+        opts:[{e:'🥇',t:'Emas & Perak'},{e:'⚙️',t:'Besi & Nikel'},{e:'🪵',t:'Kayu & Batu'},{e:'💧',t:'Air & Udara'}], a:1 },
       { q:'Medan magnet bumi berasal dari lapisan…',
         opts:[{e:'🟫',t:'Kerak'},{e:'🟧',t:'Mantel'},{e:'🟥',t:'Inti Luar'},{e:'☁️',t:'Awan'}], a:2 }
     ]
@@ -560,7 +686,7 @@ const LEVELS = [
     theory:{
       title:'Inti Dalam',
       desc:'Yeay! Kita sampai di pusat bumi! Ini inti dalam, bola padat yang super panas, terbuat dari besi dan nikel. Ini titik paling panas di bumi!',
-      fact:'Suhu inti dalam sekitar 5.400 derajat Celsius, sama panasnya dengan permukaan matahari!'
+      fact:'Suhu inti dalam sekitar 5.400°C — sama panasnya dengan permukaan matahari!'
     },
     questions:[
       { q:'Lapisan paling dalam bumi adalah…',
@@ -572,16 +698,16 @@ const LEVELS = [
       { q:'Bumi tersusun dari berapa lapisan utama?',
         opts:[{e:'2️⃣',t:'2 lapisan'},{e:'3️⃣',t:'3 lapisan'},{e:'4️⃣',t:'4 lapisan'},{e:'5️⃣',t:'5 lapisan'}], a:2 },
       { q:'Urutan lapisan bumi dari luar ke dalam adalah…',
-        opts:[{e:'🟫🟧🟥🟡',t:'Kerak, Mantel, Inti Luar, Inti Dalam'},
-              {e:'🟧🟫🟡🟥',t:'Mantel, Kerak, Inti Dalam, Inti Luar'},
-              {e:'🟡🟥🟧🟫',t:'Inti Dalam, Inti Luar, Mantel, Kerak'},
-              {e:'🟫🟥🟧🟡',t:'Kerak, Inti Luar, Mantel, Inti Dalam'}], a:0 }
+        opts:[{e:'🟫🟧🟥🟡',t:'Kerak → Mantel → Inti Luar → Inti Dalam'},
+              {e:'🟧🟫🟡🟥',t:'Mantel → Kerak → Inti Dalam → Inti Luar'},
+              {e:'🟡🟥🟧🟫',t:'Inti Dalam → Inti Luar → Mantel → Kerak'},
+              {e:'🟫🟥🟧🟡',t:'Kerak → Inti Luar → Mantel → Inti Dalam'}], a:0 }
     ]
   }
 ];
 
 /* ============================================================
-   NAVIGASI
+   5. NAVIGASI
    ============================================================ */
 const screens = ['menu','poster','map','game','reward','profile','settings'];
 function go(name){
@@ -598,7 +724,7 @@ document.querySelectorAll('[data-nav]').forEach(b=>{
 });
 
 /* ============================================================
-   MENU
+   6. MENU
    ============================================================ */
 function renderMenuStars(){
   document.querySelector('#menuStars span').textContent = state.totalStars;
@@ -610,7 +736,7 @@ document.getElementById('btnSettings').addEventListener('click',()=>go('settings
 (function(){
   const bulan=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   const d=new Date();
-  document.getElementById('todayDate').textContent=d.getDate()+' '+bulan[d.getMonth()]+' '+d.getFullYear();
+  document.getElementById('todayDate').textContent=`${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
 })();
 
 function syncToggleUI(){
@@ -637,7 +763,7 @@ document.getElementById('btnReset').addEventListener('click',()=>{
 syncToggleUI();
 
 /* ============================================================
-   POSTER TEORI
+   7. POSTER TEORI
    ============================================================ */
 let visitedLayers = new Set();
 let posterSource = 'menu';
@@ -677,7 +803,6 @@ function startPoster(source = 'menu'){
   });
 
   renderHotspots();
-  renderLegend();
 
   document.getElementById('piEmoji').textContent = '🌍';
   document.getElementById('piTitle').textContent = 'Ayo Jelajahi!';
@@ -691,43 +816,39 @@ function startPoster(source = 'menu'){
   if(visitedLayers.size >= 4){
     speak('Poster lapisan bumi. Ketuk titik untuk mengulang pelajaran!');
   } else {
-    speak('Selamat datang! Ketuk titik berwarna di poster untuk mempelajari setiap lapisan bumi!');
+    speak('Selamat datang! Ketuk tiap titik berwarna pada poster untuk mengenal lapisan bumi!');
   }
 }
 
 function renderFallbackPoster(){
   document.getElementById('posterFallback').innerHTML = `
-    <svg viewBox="0 0 320 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Poster Lapisan Bumi">
+    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#FFF3E0"/>
-          <stop offset="100%" stop-color="#FFD9A8"/>
-        </linearGradient>
+        <radialGradient id="bgGlow">
+          <stop offset="0%" stop-color="#FFF8E1"/>
+          <stop offset="100%" stop-color="#F5E6C8"/>
+        </radialGradient>
       </defs>
-      <rect width="320" height="400" fill="url(#bgGrad)" rx="20"/>
-      <rect x="0" y="0" width="320" height="52" fill="#9B5DE5"/>
-      <text x="160" y="34" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="18" fill="#fff">LAPISAN BUMI</text>
-      <text x="24" y="86" font-size="16">✨</text>
-      <text x="284" y="98" font-size="14">⭐</text>
-      <text x="20" y="372" font-size="14">🌟</text>
-      <text x="286" y="366" font-size="12">✨</text>
-      <text x="38" y="130" font-size="18">☀️</text>
-      <text x="272" y="330" font-size="16">💫</text>
-      <g transform="translate(160, 210)">
-        <circle r="135" fill="#E8F4FF" opacity=".4"/>
-        <circle r="120" fill="#C68642"/>
-        <circle r="80" fill="#FF8C42"/>
-        <circle r="48" fill="#FF4E3A"/>
-        <circle r="22" fill="#FFD93D"/>
-        <circle r="120" fill="none" stroke="#7BC96F" stroke-width="6"/>
-        <circle r="5" fill="#FFF3B0" opacity=".9"/>
-        <circle cx="-90" cy="-40" r="3" fill="#A9714B" opacity=".6"/>
-        <circle cx="-60" cy="70" r="4" fill="#A9714B" opacity=".5"/>
-        <circle cx="80" cy="-30" r="3" fill="#A9714B" opacity=".6"/>
-        <circle cx="95" cy="55" r="3" fill="#A9714B" opacity=".5"/>
-        <circle cx="-100" cy="30" r="3" fill="#A9714B" opacity=".5"/>
+      <rect width="400" height="400" fill="url(#bgGlow)" rx="20"/>
+      <g transform="translate(200,200)">
+        <circle r="170" fill="#E8F4FF" opacity=".5"/>
+        <circle r="150" fill="#3B82F6"/>
+        <path d="M-150 -40 Q-90 -60 -60 -20 Q-100 10 -130 40 Q-160 20 -150 -40Z" fill="#4ADE80"/>
+        <path d="M-120 80 Q-60 90 -40 130 Q-80 150 -120 130Z" fill="#4ADE80"/>
+        <path d="M-50 -130 Q-10 -140 10 -110 Q-20 -100 -50 -130Z" fill="#4ADE80"/>
+        <path d="M30 -140 Q80 -130 110 -90 Q60 -70 30 -140Z" fill="#4ADE80"/>
+        <path d="M-150 60 Q-120 100 -60 150 Q-40 180 20 160 Q60 140 80 90 Q100 40 90 -10 Q80 -60 40 -90 Q-20 -120 -80 -90 Q-130 -60 -150 60Z" fill="#4ADE80" opacity=".9"/>
+        <path d="M0 -150 A150 150 0 0 1 0 150 L0 0Z" fill="#B45309"/>
+        <path d="M0 -130 A130 130 0 0 1 0 130 L0 0Z" fill="#EA580C"/>
+        <path d="M0 -70 A70 70 0 0 1 0 70 L0 0Z" fill="#FACC15"/>
+        <path d="M0 -30 A30 30 0 0 1 0 30 L0 0Z" fill="#FEF08A"/>
+        <circle r="5" fill="#FFF3B0"/>
+        <text x="90" y="-120" font-size="20" fill="#B45309" font-weight="700">Kerak</text>
+        <text x="70" y="-30" font-size="18" fill="#EA580C" font-weight="700">Mantel</text>
+        <text x="30" y="30" font-size="16" fill="#DC2626" font-weight="700">Inti Luar</text>
+        <text x="-30" y="10" font-size="14" fill="#D97706" font-weight="700" text-anchor="end">Inti Dalam</text>
       </g>
-      <text x="160" y="382" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="10" fill="#7A5A30">Ketuk titik untuk belajar!</text>
+      <text x="200" y="385" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="12" fill="#7A5A30">↑ Ketuk tiap titik untuk belajar!</text>
     </svg>
   `;
 }
@@ -742,28 +863,19 @@ function renderHotspots(){
     btn.type = 'button';
     btn.style.left = h.x + '%';
     btn.style.top  = h.y + '%';
+    btn.style.setProperty('--hs-color', h.color || 'var(--gold)');
     btn.dataset.layer = h.layer;
-    btn.innerHTML = `<span class="hs-num">${idx+1}</span>`;
+    btn.dataset.side = h.side || 'right';
     btn.setAttribute('aria-label', LEVELS[h.layer].theory.title);
-    const lbl = document.createElement('span');
-    lbl.className = 'hs-label';
-    lbl.textContent = LEVELS[h.layer].theory.title;
-    btn.appendChild(lbl);
+    
+    // Struktur: dot + label (keterangan)
+    btn.innerHTML = `
+      <span class="dot"></span>
+      <span class="label">${h.label || LEVELS[h.layer].name}</span>
+    `;
+    
     btn.addEventListener('click', () => onHotspotClick(h.layer, btn));
     wrap.appendChild(btn);
-  });
-}
-
-function renderLegend(){
-  const el = document.getElementById('posterLegend');
-  if(!el) return;
-  el.innerHTML = '';
-  POSTER_CONFIG.hotspots.forEach((h, idx)=>{
-    const lv = LEVELS[h.layer];
-    const item = document.createElement('div');
-    item.className = 'lg-item';
-    item.innerHTML = `<span class="lg-num">${idx+1}</span><span class="lg-dot" style="background:${lv.color};"></span><span>${lv.name}</span>`;
-    el.appendChild(item);
   });
 }
 
@@ -805,7 +917,7 @@ function showLayerInfo(layerIdx){
 function updatePosterProgress(){
   const count = visitedLayers.size;
   document.getElementById('ppFill').style.width = (count/4*100)+'%';
-  document.getElementById('ppText').textContent = count+' / 4';
+  document.getElementById('ppText').textContent = `${count} / 4`;
 
   document.querySelectorAll('#posterDepthbar .depth-pill').forEach((p, idx)=>{
     if(visitedLayers.has(idx)) p.classList.add('done');
@@ -815,7 +927,7 @@ function updatePosterProgress(){
   const btn = document.getElementById('btnStartFromPoster');
   if(count >= 4){
     btn.disabled = false;
-    btn.textContent = posterSource === 'map' ? 'Kembali ke Peta' : 'Mulai Petualangan!';
+    btn.textContent = posterSource === 'map' ? '← Kembali ke Peta' : '▶ Mulai Petualangan!';
     if(count === 4 && !btn.dataset.celebrated && posterSource === 'menu'){
       btn.dataset.celebrated = '1';
       setTimeout(()=>{
@@ -825,7 +937,7 @@ function updatePosterProgress(){
     }
   } else {
     btn.disabled = true;
-    btn.textContent = 'Jelajahi dulu ('+count+'/4)';
+    btn.textContent = `Jelajahi dulu (${count}/4)`;
     delete btn.dataset.celebrated;
   }
 }
@@ -840,7 +952,7 @@ document.getElementById('btnPosterBack').addEventListener('click', ()=>{
 });
 
 /* ============================================================
-   MAP
+   8. MAP
    ============================================================ */
 function isUnlocked(i){ return i===0 || state.levelStars[i-1]>=1; }
 
@@ -854,7 +966,7 @@ function renderMap(){
     const starStr = stars>0 ? '⭐'.repeat(stars)+'☆'.repeat(3-stars) : '☆☆☆';
     const btn=document.createElement('button');
     btn.className='level-card'+(unlocked?'':' locked');
-    btn.style.background='linear-gradient(135deg, '+lv.color2+', '+lv.color+')';
+    btn.style.background=`linear-gradient(135deg, ${lv.color2}, ${lv.color})`;
     btn.style.animationDelay=(i*.08)+'s';
     btn.innerHTML=`
       <div class="emoji-badge">${unlocked?lv.emoji:'🔒'}</div>
@@ -876,14 +988,14 @@ document.getElementById('btnReviewPoster').addEventListener('click', ()=>{
 });
 
 /* ============================================================
-   GAMEPLAY
+   9. GAMEPLAY
    ============================================================ */
 let game = null;
 
 function startQuiz(i){
   const lv = LEVELS[i];
   game = { level:i, qi:0, mistakes:0, sessionStars:0, locked:false };
-  document.getElementById('gameTitle').textContent = 'Level '+(i+1)+' · '+lv.name;
+  document.getElementById('gameTitle').textContent = `Level ${i+1} · ${lv.name}`;
   updateGameStars();
   sfx.whoosh();
   go('game');
@@ -909,7 +1021,7 @@ function renderQuestion(){
   prog.innerHTML='';
   lv.questions.forEach((_,idx)=>{
     const d=document.createElement('div');
-    d.className='dot'+(idx<=game.qi?' on':'');
+    d.className='dot-progress'+(idx<=game.qi?' on':'');
     prog.appendChild(d);
   });
 
@@ -983,19 +1095,19 @@ function finishLevel(){
   rs.forEach((r,i)=>{ if(i<stars){ setTimeout(()=>{ r.classList.add('lit'); sfx.twinkle(); }, 300+i*380); } });
 
   document.getElementById('rewardMsg').textContent =
-    'Kamu dapat '+stars+' bintang · +'+(stars*10)+' poin';
+    `Kamu dapat ${stars} bintang · +${stars*10} poin 🎯`;
 
   const badgeEl=document.getElementById('rewardBadge');
   if(prev===0){
     badgeEl.style.display='block';
-    badgeEl.innerHTML='🏅 Lencana baru: <strong>'+lv.badge+'</strong>';
+    badgeEl.innerHTML=`🏅 Lencana baru: <strong>${lv.badge}</strong>`;
   } else {
     badgeEl.style.display='none';
   }
 
   const nextBtn=document.getElementById('btnNext');
   const isLast = game.level===LEVELS.length-1;
-  nextBtn.textContent = isLast ? 'Selesai' : 'Lanjut';
+  nextBtn.textContent = isLast ? '🏠 Selesai' : '➡️ Lanjut';
   nextBtn.onclick=()=>{
     if(isLast){ go('menu'); }
     else { startQuiz(game.level+1); }
@@ -1006,7 +1118,7 @@ function finishLevel(){
 }
 
 /* ============================================================
-   EFEK
+   10. EFEK
    ============================================================ */
 function jumpMolie(cls){
   const m=document.querySelector('#screen-game .molie');
@@ -1050,7 +1162,7 @@ function confettiBurstAt(x, y, n){
 }
 
 /* ============================================================
-   PROFIL
+   11. PROFIL
    ============================================================ */
 function renderProfile(){
   document.getElementById('pStars').textContent = state.totalStars;
@@ -1067,7 +1179,7 @@ function renderProfile(){
 }
 
 /* ============================================================
-   MUSIK LATAR
+   12. MUSIK LATAR
    ============================================================ */
 let musicTimer=null;
 function startMusic(){
@@ -1083,7 +1195,7 @@ function startMusic(){
 document.addEventListener('click',()=>{ AC(); startMusic(); }, {once:true});
 
 /* ============================================================
-   INIT
+   13. INIT
    ============================================================ */
 renderMenuStars();
 </script>
