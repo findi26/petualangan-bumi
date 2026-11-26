@@ -1329,13 +1329,15 @@ function renderProfile(){
 let musicTimer=null;
 function startMusic(){
   if(musicTimer) return;
-  const notes=[523,587,659,784,659,587,523,392];
+  const notes=[659,784,880,784,659,523,587,659,784,659,523,392,523,587];
   let i=0;
   musicTimer=setInterval(()=>{
     if(!state.music || !state.sound) return;
-    tone(notes[i%notes.length], .5, 'triangle', .045);
+    tone(notes[i%notes.length], .35, 'triangle', .06);
+    // harmoni ringan
+    if(i%2===0) tone(notes[i%notes.length]/2, .35, 'sine', .025);
     i++;
-  }, 620);
+  }, 420);
 }
 document.addEventListener('click',()=>{ AC(); startMusic(); }, {once:true});
 
